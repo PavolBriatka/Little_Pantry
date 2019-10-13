@@ -50,6 +50,7 @@ dependencies {
 
     //Dagger
     api 'com.google.dagger:dagger:2.22'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     kapt 'com.google.dagger:dagger-compiler:2.22'
     api 'com.google.dagger:dagger-android:2.22'
     api 'com.google.dagger:dagger-android-support:2.22' // if you use the support libraries
@@ -60,6 +61,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.1.0'
     implementation 'com.google.firebase:firebase-auth:19.1.0'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
+
+    // Navigation
+    def nav_version = "2.1.0"
+    implementation "androidx.navigation:navigation-fragment:$nav_version"
+    implementation "androidx.navigation:navigation-ui:$nav_version"
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
