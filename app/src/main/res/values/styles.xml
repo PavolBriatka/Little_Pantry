@@ -12,4 +12,9 @@
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
 
+    <style name="CustomTabStyle" parent="Widget.Design.TabLayout">
+        <item name="tabIndicatorColor">@color/colorPrimary</item>
+    </style>
+
+
 </resources>

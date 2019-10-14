@@ -3,4 +3,7 @@
 
     <string name="login_pager_log_in_tab">Log in</string>
     <string name="login_pager_register_tab">Register</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="log_in_button">Log in</string>
 </resources>

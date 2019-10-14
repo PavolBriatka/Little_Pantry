@@ -6,23 +6,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.auth.fragments.LoginFragment">
 
-    <androidx.viewpager.widget.ViewPager
-        android:id="@+id/login_viewpager"
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginStart="@dimen/large_margin"
-        android:layout_marginEnd="@dimen/large_margin"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="300dp"
+        android:layout_margin="@dimen/medium_margin"
+        android:elevation="4dp"
+        app:cardCornerRadius="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tl_login_choices"
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/login_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent">
 
-    </androidx.viewpager.widget.ViewPager>
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tl_login_choices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:tabBackground="@drawable/tab_color_selector"
+                app:tabIndicatorColor="@android:color/transparent"/>
+
+        </androidx.viewpager.widget.ViewPager>
+
+    </androidx.cardview.widget.CardView>
 
 
 
