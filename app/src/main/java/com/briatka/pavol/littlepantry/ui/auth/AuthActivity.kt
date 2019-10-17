@@ -5,7 +5,6 @@ import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.briatka.pavol.littlepantry.R
-import com.briatka.pavol.littlepantry.ui.auth.fragments.LoginFragment
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.viewmodels.ViewModelsProviderFactory
 import dagger.android.support.DaggerAppCompatActivity
@@ -21,7 +20,7 @@ class AuthActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
-        
+
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
 
     }
@@ -29,21 +28,11 @@ class AuthActivity : DaggerAppCompatActivity() {
     override fun onStart() {
         super.onStart()
         subscribeObserver()
-        initLoginFragment()
     }
-
-    private fun initLoginFragment() {
-        val loginFragment = LoginFragment()
-
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.login_container, loginFragment)
-            .commit()
-    }
-
 
     private fun subscribeObserver() {
         viewModel.isExistingUser.observe(this, Observer<Boolean> { isExistingUser ->
-            Toast.makeText(this,"Is existing user: $isExistingUser", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Is existing user: $isExistingUser", Toast.LENGTH_LONG).show()
         })
     }
 }

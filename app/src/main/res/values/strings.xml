@@ -6,4 +6,7 @@
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="log_in_button">Log in</string>
+    <string name="register_button">Register</string>
+    <string name="login_fragment_label">Login Fragment</string>
+    <string name="reg_form_fragment_label">Registration Form</string>
 </resources>

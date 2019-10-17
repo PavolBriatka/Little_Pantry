@@ -1,18 +1,31 @@
 package com.briatka.pavol.littlepantry.ui.auth
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager.widget.PagerAdapter
+import com.briatka.pavol.littlepantry.R
+import kotlinx.android.synthetic.main.pager_login_layout.view.*
 
 class LoginPagerAdapter(val context: Context): PagerAdapter() {
 
+    var onButtonClicked: ((View) -> Unit)? = null
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val pagerEnum = PagerEnum.values()[position]
         val inflater = LayoutInflater.from(context)
         val layout = inflater.inflate(pagerEnum.layoutId, container, false)
+
+        if (layout.id == R.id.cl_register) {
+            Log.e("REGISTER", "YAY")
+            layout.setOnClickListener {
+                if (it.id == R.id.btn_register_email_password) {
+                    Log.e("REGISTER", "click")
+                }
+            }
+        }
         container.addView(layout)
         return layout
     }
