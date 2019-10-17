@@ -1,29 +1,39 @@
 package com.briatka.pavol.littlepantry.ui.auth
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.viewpager.widget.PagerAdapter
 import com.briatka.pavol.littlepantry.R
-import kotlinx.android.synthetic.main.pager_login_layout.view.*
+import com.jakewharton.rxbinding3.view.clicks
+import io.reactivex.disposables.CompositeDisposable
 
 class LoginPagerAdapter(val context: Context): PagerAdapter() {
 
     var onButtonClicked: ((View) -> Unit)? = null
+    private var disposables = CompositeDisposable()
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val pagerEnum = PagerEnum.values()[position]
         val inflater = LayoutInflater.from(context)
         val layout = inflater.inflate(pagerEnum.layoutId, container, false)
 
-        if (layout.id == R.id.cl_register) {
-            Log.e("REGISTER", "YAY")
-            layout.setOnClickListener {
-                if (it.id == R.id.btn_register_email_password) {
-                    Log.e("REGISTER", "click")
-                }
+        when (layout.id) {
+            R.id.cl_register -> {
+                val button = layout.findViewById<Button>(R.id.btn_register_email_password)
+                button.clicks()
+                    .subscribe {
+                        onButtonClicked?.invoke(button)
+                    }.let { disposables.add(it) }
+            }
+            R.id.cl_login -> {
+                val button = layout.findViewById<Button>(R.id.btn_login_email_password)
+                button.clicks()
+                    .subscribe {
+                        onButtonClicked?.invoke(button)
+                    }.let { disposables.add(it) }
             }
         }
         container.addView(layout)

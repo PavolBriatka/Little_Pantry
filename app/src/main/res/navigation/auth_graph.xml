@@ -13,11 +13,20 @@
         <action
             android:id="@+id/action_open_registration_form"
             app:destination="@id/registrationFormFragment"/>
+        <action
+            android:id="@+id/action_open_main_activity"
+            app:destination="@id/mainActivity"/>
 
     <fragment
         android:id="@+id/registrationFormFragment"
         android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegistrationFormFragment"
         android:label="@string/reg_form_fragment_label"
         tools:layout="@layout/fragment_registration_form" />
+
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.briatka.pavol.littlepantry.ui.main.MainActivity"
+        android:label="MainActivity"
+        tools:layout="@layout/activity_main"/>
 
 </navigation>

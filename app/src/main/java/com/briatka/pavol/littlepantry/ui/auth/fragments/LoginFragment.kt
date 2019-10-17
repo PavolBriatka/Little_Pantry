@@ -9,7 +9,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.LoginPagerAdapter
-import com.jakewharton.rxbinding3.view.clicks
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 
@@ -34,7 +33,11 @@ class LoginFragment : DaggerFragment() {
         viewPager = view.findViewById(R.id.login_viewpager)
         pagerAdapter = LoginPagerAdapter(requireContext())
         pagerAdapter.onButtonClicked =  {
-            subscribeToRegisterButtonClicks(it)
+            this.findNavController().navigate(if (it.id == R.id.btn_login_email_password) {
+                R.id.action_open_main_activity
+            } else {
+                R.id.action_open_registration_form
+            })
         }
 
         viewPager.adapter = pagerAdapter
@@ -48,12 +51,5 @@ class LoginFragment : DaggerFragment() {
     override fun onDestroy() {
         disposables.dispose()
         super.onDestroy()
-    }
-
-   private fun subscribeToRegisterButtonClicks(view: View) {
-        view.clicks()
-            .subscribe {
-                this.findNavController().navigate(R.id.action_open_registration_form)
-            }.let { disposables.add(it) }
     }
 }
