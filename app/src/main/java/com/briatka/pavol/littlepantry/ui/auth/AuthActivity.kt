@@ -1,8 +1,6 @@
 package com.briatka.pavol.littlepantry.ui.auth
 
 import android.os.Bundle
-import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
@@ -23,16 +21,5 @@ class AuthActivity : DaggerAppCompatActivity() {
 
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
 
-    }
-
-    override fun onStart() {
-        super.onStart()
-        subscribeObserver()
-    }
-
-    private fun subscribeObserver() {
-        viewModel.isExistingUser.observe(this, Observer<Boolean> { isExistingUser ->
-            Toast.makeText(this, "Is existing user: $isExistingUser", Toast.LENGTH_LONG).show()
-        })
     }
 }

@@ -1,6 +1,12 @@
 package com.briatka.pavol.littlepantry.ui.auth.viewmodel
 
+import io.reactivex.subjects.BehaviorSubject
+
 interface ViewModelContract {
 
-    fun startUserVerification(email: String)
+    val loginEmail: BehaviorSubject<String>
+    val loginPassword: BehaviorSubject<String>
+
+    fun startUserVerification()
+
 }

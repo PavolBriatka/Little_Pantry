@@ -5,10 +5,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
+import android.widget.Toast
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.viewpager.widget.ViewPager
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.LoginPagerAdapter
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 
@@ -16,7 +19,9 @@ import io.reactivex.disposables.CompositeDisposable
 class LoginFragment : DaggerFragment() {
 
     private lateinit var viewPager: ViewPager
-    private lateinit var  pagerAdapter: LoginPagerAdapter
+    private lateinit var pagerAdapter: LoginPagerAdapter
+
+    val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
 
     override fun onCreateView(
@@ -31,16 +36,22 @@ class LoginFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewPager = view.findViewById(R.id.login_viewpager)
-        pagerAdapter = LoginPagerAdapter(requireContext())
-        pagerAdapter.onButtonClicked =  {
-            this.findNavController().navigate(if (it.id == R.id.btn_login_email_password) {
-                R.id.action_authenticate_user
-            } else {
-                R.id.action_start_registration
-            })
-        }
+        pagerAdapter = LoginPagerAdapter(requireContext(), sharedViewModel)
 
         viewPager.adapter = pagerAdapter
+    }
+
+    override fun onStart() {
+        super.onStart()
+        subscribeObserver()
+
+    }
+
+    private fun subscribeObserver() {
+        sharedViewModel.isExistingUser.observe(this, Observer<Boolean> { isExistingUser ->
+            Toast.makeText(requireContext(), "Is existing user: $isExistingUser", Toast.LENGTH_LONG)
+                .show()
+        })
     }
 
     override fun onStop() {
@@ -50,6 +61,7 @@ class LoginFragment : DaggerFragment() {
 
     override fun onDestroy() {
         disposables.dispose()
+        pagerAdapter.dispose()
         super.onDestroy()
     }
 }
