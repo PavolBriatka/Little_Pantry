@@ -10,23 +10,37 @@
         android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.LoginFragment"
         android:label="@string/login_fragment_label"
         tools:layout="@layout/fragment_login" />
-        <action
-            android:id="@+id/action_open_registration_form"
-            app:destination="@id/registrationFormFragment"/>
-        <action
-            android:id="@+id/action_open_main_activity"
-            app:destination="@id/mainActivity"/>
+    <action
+        android:id="@+id/action_authenticate_user"
+        app:destination="@id/mainActivity" />
+    <action
+        android:id="@+id/action_start_registration"
+        app:destination="@id/registration_graph" />
 
-    <fragment
-        android:id="@+id/registrationFormFragment"
-        android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegistrationFormFragment"
-        android:label="@string/reg_form_fragment_label"
-        tools:layout="@layout/fragment_registration_form" />
 
     <activity
         android:id="@+id/mainActivity"
         android:name="com.briatka.pavol.littlepantry.ui.main.MainActivity"
         android:label="MainActivity"
-        tools:layout="@layout/activity_main"/>
+        tools:layout="@layout/activity_main" />
+
+    <navigation
+        android:id="@+id/registration_graph"
+        app:startDestination="@id/registerUserProfileFragment">
+
+        <fragment
+            android:id="@+id/registerUserProfileFragment"
+            android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegisterUserProfileFragment"
+            android:label="@string/register_user_profile_fragment_label"
+            tools:layout="@layout/fragment_register_user_profile" />
+
+        <fragment
+            android:id="@+id/registrationFormFragment"
+            android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegistrationFormFragment"
+            android:label="@string/reg_form_fragment_label"
+            tools:layout="@layout/fragment_registration_form" />
+
+
+    </navigation>
 
 </navigation>

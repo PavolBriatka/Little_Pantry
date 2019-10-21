@@ -9,4 +9,9 @@
     <string name="register_button">Register</string>
     <string name="login_fragment_label">Login Fragment</string>
     <string name="reg_form_fragment_label">Registration Form</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="register_user_profile_fragment_label">Register user profile</string>
+    <string name="posts_fragment_label">Posts</string>
 </resources>

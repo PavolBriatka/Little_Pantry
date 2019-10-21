@@ -34,9 +34,9 @@ class LoginFragment : DaggerFragment() {
         pagerAdapter = LoginPagerAdapter(requireContext())
         pagerAdapter.onButtonClicked =  {
             this.findNavController().navigate(if (it.id == R.id.btn_login_email_password) {
-                R.id.action_open_main_activity
+                R.id.action_authenticate_user
             } else {
-                R.id.action_open_registration_form
+                R.id.action_start_registration
             })
         }
 
