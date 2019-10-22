@@ -26,7 +26,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:visibility="invisible"
-        android:id="@+id/tl_password"
+        android:id="@+id/tl_register_password"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
         app:layout_constraintTop_toBottomOf="@id/tl_email_address">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/et_password"
+            android:id="@+id/et_register_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPassword"
@@ -56,6 +56,6 @@
         android:textSize="14sp"
         android:textColor="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tl_password" />
+        app:layout_constraintTop_toBottomOf="@+id/tl_register_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

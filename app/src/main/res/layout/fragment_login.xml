@@ -7,6 +7,7 @@
     tools:context=".ui.auth.fragments.LoginFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cv_login_layout"
         android:layout_width="match_parent"
         android:layout_height="300dp"
         android:layout_margin="@dimen/medium_margin"
@@ -17,22 +18,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/login_viewpager"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.google.android.material.tabs.TabLayout
-                android:id="@+id/tl_login_choices"
+            <androidx.viewpager.widget.ViewPager
+                android:id="@+id/vp_login_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:tabBackground="@drawable/tab_color_selector"
-                app:tabIndicatorColor="@android:color/transparent"/>
+                android:layout_height="match_parent">
 
-        </androidx.viewpager.widget.ViewPager>
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/tl_login_choices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:tabBackground="@drawable/tab_color_selector"
+                    app:tabIndicatorColor="@android:color/transparent" />
+
+            </androidx.viewpager.widget.ViewPager>
+
+            <ProgressBar
+                android:id="@+id/pb_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:visibility="gone"/>
+
+        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

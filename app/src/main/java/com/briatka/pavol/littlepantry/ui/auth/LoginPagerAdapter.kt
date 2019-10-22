@@ -12,10 +12,14 @@ import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.disposables.CompositeDisposable
-import java.util.concurrent.TimeUnit
 
 class LoginPagerAdapter(private val context: Context, private val sharedViewModel: AuthViewModel) :
     PagerAdapter() {
+
+    companion object {
+        private const val LOGIN_FLAG = "login_flag"
+        private const val REGISTER_FLAG = "register_flag"
+    }
 
     private var disposables = CompositeDisposable()
 
@@ -24,6 +28,7 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
 
     private lateinit var loginEmail: TextInputEditText
     private lateinit var loginPassword: TextInputEditText
+    private lateinit var registerEmail: TextInputEditText
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val pagerEnum = PagerEnum.values()[position]
@@ -34,14 +39,16 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             R.id.cl_login -> {
                 loginButton = layout.findViewById(R.id.btn_login_email_password)
                 loginEmail = layout.findViewById(R.id.et_email_address)
-                loginPassword = layout.findViewById(R.id.et_password)
+                loginPassword = layout.findViewById(R.id.et_register_password)
                 subscribeToLoginButton()
-                subscribeToEmailField()
-                subscribeToPasswordField()
+                subscribeToLoginEmailField()
+                subscribeToLoginPasswordField()
             }
             R.id.cl_register -> {
                 registerButton = layout.findViewById(R.id.btn_register_email_password)
+                registerEmail = layout.findViewById(R.id.et_email_address)
                 subscribeToRegisterButton()
+                subscribeToRegisterEmailField()
             }
         }
         container.addView(layout)
@@ -68,33 +75,39 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
     private fun subscribeToLoginButton() {
         loginButton.clicks()
             .subscribe {
-                sharedViewModel.startUserVerification()
+                sharedViewModel.startUserVerification(LOGIN_FLAG)
             }.let { disposables.add(it) }
     }
 
     private fun subscribeToRegisterButton() {
         registerButton.clicks()
             .subscribe {
-
+                sharedViewModel.startUserVerification(REGISTER_FLAG)
             }.let { disposables.add(it) }
     }
 
-    private fun subscribeToEmailField() {
+    private fun subscribeToLoginEmailField() {
         loginEmail.textChanges()
-            .debounce(500, TimeUnit.MILLISECONDS)
             .map {
                 it.toString().trim()
             }
             .subscribe(sharedViewModel.loginEmail::onNext).let { disposables.add(it) }
     }
 
-    private fun subscribeToPasswordField() {
+    private fun subscribeToLoginPasswordField() {
         loginPassword.textChanges()
-            .debounce(500, TimeUnit.MILLISECONDS)
             .map {
                 it.toString().trim()
             }
             .subscribe(sharedViewModel.loginPassword::onNext).let { disposables.add(it) }
+    }
+
+    private fun subscribeToRegisterEmailField() {
+        registerEmail.textChanges()
+            .map {
+                it.toString().trim()
+            }
+            .subscribe(sharedViewModel.registerEmail::onNext).let { disposables.add(it) }
     }
 
     fun dispose() {

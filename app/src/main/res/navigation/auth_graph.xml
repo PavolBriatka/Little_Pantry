@@ -11,7 +11,7 @@
         android:label="@string/login_fragment_label"
         tools:layout="@layout/fragment_login" />
     <action
-        android:id="@+id/action_authenticate_user"
+        android:id="@+id/action_user_authenticated"
         app:destination="@id/mainActivity" />
     <action
         android:id="@+id/action_start_registration"
@@ -23,22 +23,28 @@
         android:name="com.briatka.pavol.littlepantry.ui.main.MainActivity"
         android:label="MainActivity"
         tools:layout="@layout/activity_main" />
+    <action
+        android:id="@+id/action_open_main_activity"
+        app:destination="@id/mainActivity"/>
 
     <navigation
         android:id="@+id/registration_graph"
-        app:startDestination="@id/registerUserProfileFragment">
-
-        <fragment
-            android:id="@+id/registerUserProfileFragment"
-            android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegisterUserProfileFragment"
-            android:label="@string/register_user_profile_fragment_label"
-            tools:layout="@layout/fragment_register_user_profile" />
+        app:startDestination="@id/registrationFormFragment">
 
         <fragment
             android:id="@+id/registrationFormFragment"
             android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegistrationFormFragment"
             android:label="@string/reg_form_fragment_label"
             tools:layout="@layout/fragment_registration_form" />
+        <action
+            android:id="@+id/action_collect_user_info"
+            app:destination="@id/registerUserProfileFragment" />
+
+        <fragment
+            android:id="@+id/registerUserProfileFragment"
+            android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegisterUserProfileFragment"
+            android:label="@string/register_user_profile_fragment_label"
+            tools:layout="@layout/fragment_register_user_profile" />
 
 
     </navigation>
