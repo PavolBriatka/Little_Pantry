@@ -52,7 +52,7 @@
         android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/medium_margin"
         android:layout_marginBottom="16dp"
-        android:text="@string/register_button"
+        android:text="@string/register_label"
         android:textSize="14sp"
         android:textColor="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"

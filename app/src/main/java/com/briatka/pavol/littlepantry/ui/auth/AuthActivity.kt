@@ -47,10 +47,6 @@ class AuthActivity : DaggerAppCompatActivity() {
                 AuthRegistrationFinalized -> navController.navigate(R.id.action_open_main_activity)
                 AuthLoginSuccessful -> navController.navigate(R.id.action_open_main_activity)
                 is AuthRegistrationFailure -> Toast.makeText(this, userState.error, Toast.LENGTH_LONG).show()
-                is AuthLoginFailure -> {
-                    pb_login.visibility = View.GONE
-                    Toast.makeText(this, userState.error, Toast.LENGTH_LONG).show()
-                }
             }
         })
     }

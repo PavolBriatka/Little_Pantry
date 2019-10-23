@@ -4,8 +4,13 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_EMAIL_ERROR
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
@@ -18,8 +23,6 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     companion object {
         const val TAG = "AuthViewModel"
         const val ERROR_UNSPECIFIED = "error_unspecified"
-        private const val LOGIN_FLAG = "login_flag"
-        private const val REGISTER_FLAG = "register_flag"
     }
 
     private val disposables = CompositeDisposable()
@@ -56,46 +59,46 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     }
 
     private fun verifyUserEmail(email: String, flag: String) {
-        if (email.isNotBlank()) {
-            firebaseAuth.fetchSignInMethodsForEmail(email).addOnSuccessListener { result ->
-                val signInMethods = result.signInMethods
+        firebaseAuth.fetchSignInMethodsForEmail(email).addOnSuccessListener { result ->
+            val signInMethods = result.signInMethods
 
-                when (flag) {
-                    LOGIN_FLAG -> {
-                        signInMethods?.let {
-                            if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
-                                startUserLogin()
-                            } else {
-                                userState.postValue(AuthUserNotExist)
-                            }
+            when (flag) {
+                LOGIN_FLAG -> {
+                    signInMethods?.let {
+                        if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
+                            startUserLogin()
+                        } else {
+                            userState.postValue(AuthUserNotExist)
                         }
                     }
-                    REGISTER_FLAG -> {
-                        signInMethods?.let {
-                            if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
-                                userState.postValue(AuthUserAlreadyExist)
-                            } else {
-                                userState.postValue(AuthCreateNewUser)
-                            }
+                }
+                REGISTER_FLAG -> {
+                    signInMethods?.let {
+                        if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
+                            userState.postValue(AuthUserAlreadyExist)
+                        } else {
+                            userState.postValue(AuthCreateNewUser)
                         }
                     }
                 }
             }
-                .addOnFailureListener { exception ->
-                    Log.e(TAG, exception.message)
-                    userState.postValue(
+        }
+            .addOnFailureListener {
+                when (flag) {
+                    LOGIN_FLAG -> userState.postValue(AuthEmailVerificationFailure(LOGIN_EMAIL_ERROR))
+                    REGISTER_FLAG -> userState.postValue(
                         AuthEmailVerificationFailure(
-                            exception.message ?: ERROR_UNSPECIFIED
+                            REGISTER_EMAIL_ERROR
                         )
                     )
                 }
-        }
+            }
     }
 
     override fun startUserRegistration() {
         Log.e(TAG, "${registerEmail.value}y, ${registerPassword.value}x")
         Observable.combineLatest(registerEmail.hide(), registerPassword.hide(),
-            BiFunction<String, String, Pair<String,String>> { email, password ->
+            BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
             })
             .firstElement()
@@ -106,13 +109,17 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
 
     private fun registerNewUser(email: String, password: String) {
         firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener {task ->
+            .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "createUserWithEmail:success")
                     userState.postValue(AuthRegistrationSuccessful)
                 } else {
                     Log.w(TAG, "createUserWithEmail:failure ${task.exception}")
-                    userState.postValue(AuthRegistrationFailure(task.exception?.message ?: ERROR_UNSPECIFIED))
+                    userState.postValue(
+                        AuthRegistrationFailure(
+                            task.exception?.message ?: ERROR_UNSPECIFIED
+                        )
+                    )
                 }
 
             }
@@ -123,8 +130,8 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     }
 
     override fun startUserLogin() {
-        Observable.combineLatest(loginEmail.hide(),loginPassword.hide(),
-            BiFunction<String,String, Pair<String,String>> { email, password ->
+        Observable.combineLatest(loginEmail.hide(), loginPassword.hide(),
+            BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
             })
             .firstElement()
@@ -140,8 +147,14 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                     Log.d(TAG, "signInWithEmail:success")
                     userState.postValue(AuthLoginSuccessful)
                 } else {
-                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                    userState.postValue(AuthLoginFailure(task.exception?.message ?: ERROR_UNSPECIFIED))
+                    Log.e(TAG, "signInWithEmail:failure ${task.exception}")
+                    if (task.exception is FirebaseAuthInvalidCredentialsException) {
+                        userState.postValue(AuthWrongPassword)
+                    } else {
+                        userState.postValue(
+                            AuthLoginFailure(task.exception?.message ?: ERROR_UNSPECIFIED)
+                        )
+                    }
                 }
             }
     }

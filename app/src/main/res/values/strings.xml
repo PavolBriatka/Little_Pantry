@@ -1,21 +1,23 @@
 <resources>
     <string name="app_name">LittlePantry</string>
 
-    <string name="login_pager_log_in_tab">Log in</string>
-    <string name="login_pager_register_tab">Register</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
-    <string name="log_in_button">Log in</string>
-    <string name="register_button">Register</string>
+    <string name="log_in_label">Log in</string>
+    <string name="register_label">Register</string>
     <string name="login_fragment_label">Login Fragment</string>
     <string name="reg_form_fragment_label">Registration Form</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="register_user_profile_fragment_label">Register user profile</string>
     <string name="posts_fragment_label">Posts</string>
     <string name="hint_first_name">First name</string>
     <string name="hint_surname">Surname</string>
     <string name="hint_username">Username</string>
-    <string name="buton_create_account">Create account</string>
+    <string name="button_create_account">Create account</string>
+    <string name="login_error_user_not_exist">This email is not registered.</string>
+    <string name="login_error_user_already_exist">This email is already registered.</string>
+    <string name="login_error_unknown">An error occurred. Please, try again later.</string>
+    <string name="login_malformed_email">Invalid email</string>
+    <string name="login_wrong_password">Invalid password</string>
+    <string name="login_error_missing_email">Please, fill in the email address.</string>
+    <string name="login_error_missing_password">Please, fill in the password.</string>
 </resources>

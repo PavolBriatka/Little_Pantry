@@ -8,7 +8,15 @@ import android.widget.Button
 import androidx.viewpager.widget.PagerAdapter
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_PASSWORD_ERROR
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_USER_NOT_EXIST
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_EMAIL_ERROR
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_USER_ALREADY_EXIST
 import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import io.reactivex.disposables.CompositeDisposable
@@ -16,10 +24,6 @@ import io.reactivex.disposables.CompositeDisposable
 class LoginPagerAdapter(private val context: Context, private val sharedViewModel: AuthViewModel) :
     PagerAdapter() {
 
-    companion object {
-        private const val LOGIN_FLAG = "login_flag"
-        private const val REGISTER_FLAG = "register_flag"
-    }
 
     private var disposables = CompositeDisposable()
 
@@ -30,6 +34,10 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
     private lateinit var loginPassword: TextInputEditText
     private lateinit var registerEmail: TextInputEditText
 
+    private lateinit var loginEmailWrapper: TextInputLayout
+    private lateinit var loginPasswordWrapper: TextInputLayout
+    private lateinit var registerEmailWrapper: TextInputLayout
+
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
         val pagerEnum = PagerEnum.values()[position]
         val inflater = LayoutInflater.from(context)
@@ -39,7 +47,11 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             R.id.cl_login -> {
                 loginButton = layout.findViewById(R.id.btn_login_email_password)
                 loginEmail = layout.findViewById(R.id.et_email_address)
-                loginPassword = layout.findViewById(R.id.et_register_password)
+                loginPassword = layout.findViewById(R.id.et_login_password)
+
+                loginEmailWrapper = layout.findViewById(R.id.tl_email_address)
+                loginPasswordWrapper = layout.findViewById(R.id.tl_login_password)
+
                 subscribeToLoginButton()
                 subscribeToLoginEmailField()
                 subscribeToLoginPasswordField()
@@ -47,6 +59,9 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             R.id.cl_register -> {
                 registerButton = layout.findViewById(R.id.btn_register_email_password)
                 registerEmail = layout.findViewById(R.id.et_email_address)
+
+                registerEmailWrapper = layout.findViewById(R.id.tl_email_address)
+
                 subscribeToRegisterButton()
                 subscribeToRegisterEmailField()
             }
@@ -75,14 +90,25 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
     private fun subscribeToLoginButton() {
         loginButton.clicks()
             .subscribe {
-                sharedViewModel.startUserVerification(LOGIN_FLAG)
+                when {
+                    loginEmail.text?.isBlank()!! -> loginEmailWrapper.error =
+                        context.getString(R.string.login_error_missing_email)
+                    loginPassword.text?.isBlank()!! -> loginPasswordWrapper.error =
+                        context.getString(R.string.login_error_missing_password)
+                    else -> sharedViewModel.startUserVerification(LOGIN_FLAG)
+                }
             }.let { disposables.add(it) }
     }
 
     private fun subscribeToRegisterButton() {
         registerButton.clicks()
             .subscribe {
-                sharedViewModel.startUserVerification(REGISTER_FLAG)
+                if (registerEmail.text?.isBlank()!!) {
+                    registerEmailWrapper.error =
+                        context.getString(R.string.login_error_missing_email)
+                } else {
+                    sharedViewModel.startUserVerification(REGISTER_FLAG)
+                }
             }.let { disposables.add(it) }
     }
 
@@ -91,7 +117,10 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             .map {
                 it.toString().trim()
             }
-            .subscribe(sharedViewModel.loginEmail::onNext).let { disposables.add(it) }
+            .subscribe {
+                sharedViewModel.loginEmail.onNext(it)
+                loginEmailWrapper.isErrorEnabled = false
+            }.let { disposables.add(it) }
     }
 
     private fun subscribeToLoginPasswordField() {
@@ -99,7 +128,10 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             .map {
                 it.toString().trim()
             }
-            .subscribe(sharedViewModel.loginPassword::onNext).let { disposables.add(it) }
+            .subscribe {
+                sharedViewModel.loginPassword.onNext(it)
+                loginPasswordWrapper.isErrorEnabled = false
+            }.let { disposables.add(it) }
     }
 
     private fun subscribeToRegisterEmailField() {
@@ -107,7 +139,32 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             .map {
                 it.toString().trim()
             }
-            .subscribe(sharedViewModel.registerEmail::onNext).let { disposables.add(it) }
+            .subscribe {
+                sharedViewModel.registerEmail.onNext(it)
+                registerEmailWrapper.isErrorEnabled = false
+            }.let { disposables.add(it) }
+    }
+
+    fun onCredentialsError(error: String) {
+        when (error) {
+            LOGIN_EMAIL_ERROR -> {
+                loginEmail.error = context.getString(R.string.login_malformed_email)
+            }
+            LOGIN_PASSWORD_ERROR -> {
+                loginPassword.error = context.getString(R.string.login_wrong_password)
+            }
+            LOGIN_USER_NOT_EXIST -> {
+                loginEmailWrapper.error = context.getString(R.string.login_error_user_not_exist)
+            }
+            REGISTER_EMAIL_ERROR -> {
+                registerEmail.error = context.getString(R.string.login_malformed_email)
+            }
+            REGISTER_USER_ALREADY_EXIST -> {
+                registerEmailWrapper.error =
+                    context.getString(R.string.login_error_user_already_exist)
+            }
+        }
+        notifyDataSetChanged()
     }
 
     fun dispose() {

@@ -100,7 +100,7 @@
         android:background="@drawable/btn_background"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:text="@string/buton_create_account"
+        android:text="@string/button_create_account"
         android:textColor="@color/colorAccent"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
