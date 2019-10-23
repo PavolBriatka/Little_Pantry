@@ -11,12 +11,16 @@ import javax.inject.Inject
 
 class SplashActivity : DaggerAppCompatActivity() {
 
+    companion object {
+        private const val TAG = "SplashActivity"
+    }
+
     @Inject
     lateinit var firebaseAuth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.e("SplashActivity", "called")
+        Log.d(TAG, "initialized")
         setContentView(R.layout.activity_splash)
 
     }

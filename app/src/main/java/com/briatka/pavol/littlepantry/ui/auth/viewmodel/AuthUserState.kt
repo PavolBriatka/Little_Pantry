@@ -9,6 +9,7 @@ sealed class AuthUserState {
     object AuthUserNotExist: AuthUserState()
     object AuthWrongPassword: AuthUserState()
     object AuthLoginSuccessful: AuthUserState()
+    class AuthLoginFailure(val error: String): AuthUserState()
 
     //for registration
     object AuthUserAlreadyExist: AuthUserState()

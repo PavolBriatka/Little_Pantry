@@ -13,4 +13,6 @@ interface ViewModelContract {
     fun startUserRegistration()
     fun finishRegistration()
 
+    fun startUserLogin()
+
 }

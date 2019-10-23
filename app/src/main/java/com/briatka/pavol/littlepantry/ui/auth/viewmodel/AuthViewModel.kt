@@ -31,7 +31,7 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     override val registerPassword: BehaviorSubject<String> = BehaviorSubject.create()
 
     init {
-        Log.e(TAG, "view model init...")
+        Log.d(TAG, "view model init...")
     }
 
     override fun startUserVerification(flag: String) {
@@ -99,8 +99,8 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
                 Pair(email, password)
             })
             .firstElement()
-            .subscribe {
-                registerNewUser(it.first, it.second)
+            .subscribe { userCredentials ->
+                registerNewUser(userCredentials.first, userCredentials.second)
             }.let { disposables.add(it) }
     }
 
@@ -108,10 +108,10 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener {task ->
                 if (task.isSuccessful) {
-                    Log.e(TAG, "createUserWithEmail:success")
+                    Log.d(TAG, "createUserWithEmail:success")
                     userState.postValue(AuthRegistrationSuccessful)
                 } else {
-                    Log.e(TAG, "createUserWithEmail:failure ${task.exception}")
+                    Log.w(TAG, "createUserWithEmail:failure ${task.exception}")
                     userState.postValue(AuthRegistrationFailure(task.exception?.message ?: ERROR_UNSPECIFIED))
                 }
 
@@ -122,8 +122,28 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
         userState.postValue(AuthRegistrationFinalized)
     }
 
-    private fun startUserLogin() {
+    override fun startUserLogin() {
+        Observable.combineLatest(loginEmail.hide(),loginPassword.hide(),
+            BiFunction<String,String, Pair<String,String>> { email, password ->
+                Pair(email, password)
+            })
+            .firstElement()
+            .subscribe { userCredentials ->
+                loginUser(userCredentials.first, userCredentials.second)
+            }.let { disposables.add(it) }
+    }
 
+    private fun loginUser(email: String, password: String) {
+        firebaseAuth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "signInWithEmail:success")
+                    userState.postValue(AuthLoginSuccessful)
+                } else {
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+                    userState.postValue(AuthLoginFailure(task.exception?.message ?: ERROR_UNSPECIFIED))
+                }
+            }
     }
 
 }

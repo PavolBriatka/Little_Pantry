@@ -44,8 +44,13 @@ class AuthActivity : DaggerAppCompatActivity() {
                 AuthInProgress -> pb_login.visibility = View.VISIBLE
                 AuthCreateNewUser -> navController.navigate(R.id.action_start_registration)
                 AuthRegistrationSuccessful -> navController.navigate(R.id.action_collect_user_info)
-                 is AuthRegistrationFailure -> Toast.makeText(this, userState.error, Toast.LENGTH_LONG).show()
                 AuthRegistrationFinalized -> navController.navigate(R.id.action_open_main_activity)
+                AuthLoginSuccessful -> navController.navigate(R.id.action_open_main_activity)
+                is AuthRegistrationFailure -> Toast.makeText(this, userState.error, Toast.LENGTH_LONG).show()
+                is AuthLoginFailure -> {
+                    pb_login.visibility = View.GONE
+                    Toast.makeText(this, userState.error, Toast.LENGTH_LONG).show()
+                }
             }
         })
     }
