@@ -3,6 +3,7 @@ package com.briatka.pavol.littlepantry.ui.auth.viewmodel
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.briatka.pavol.littlepantry.models.NewUser
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
@@ -15,10 +16,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
+import io.reactivex.functions.Function4
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
-class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firestore: FirebaseFirestore) : ViewModel(),
+class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firestoreDb: FirebaseFirestore) : ViewModel(),
     ViewModelContract {
 
     companion object {
@@ -116,10 +118,8 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
         firebaseAuth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Log.d(TAG, "createUserWithEmail:success")
-                    userState.postValue(AuthRegistrationSuccessful)
+                    updateDbProfileInfo()
                 } else {
-                    Log.w(TAG, "createUserWithEmail:failure ${task.exception}")
                     userState.postValue(
                         AuthRegistrationFailure(
                             task.exception?.message ?: ERROR_UNSPECIFIED
@@ -128,6 +128,21 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                 }
 
             }
+    }
+
+    private fun updateDbProfileInfo() {
+        val userId = firebaseAuth.currentUser?.uid
+        val dbUserReference = firestoreDb.collection("users").document(userId!!)
+        Observable.combineLatest(userFirstName.hide(), userSurname.hide(), userNickname.hide(), registerEmail.hide(),
+            Function4<String, String, String, String, NewUser> {firstName, surname, nickname, email ->
+                NewUser(firstName,surname,nickname,email)
+            })
+            .firstElement()
+            .subscribe {newUser ->
+                dbUserReference.set(newUser)
+                    .addOnSuccessListener { userState.postValue(AuthRegistrationSuccessful) }
+                    .addOnFailureListener { Log.w(TAG, it.message) }
+            }.let { disposables.add(it) }
     }
 
     override fun finishRegistration() {

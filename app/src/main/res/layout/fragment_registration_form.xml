@@ -21,7 +21,7 @@
             android:id="@+id/et_user_first_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:textSize="14sp"
             tools:text="Pavol" />
 
@@ -42,7 +42,7 @@
             android:id="@+id/et_user_surname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
+            android:inputType="textPersonName|textCapWords"
             android:textSize="14sp"
             tools:text="Briatka" />
 

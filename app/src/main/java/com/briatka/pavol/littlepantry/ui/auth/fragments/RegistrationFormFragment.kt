@@ -67,6 +67,7 @@ class RegistrationFormFragment : DaggerFragment() {
             .firstElement()
             .subscribe {
                 et_email_address.setText(it)
+                et_email_address.isEnabled = false
             }.let { disposables.add(it) }
     }
 
