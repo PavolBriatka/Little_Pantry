@@ -16,7 +16,7 @@
     <string name="login_error_user_not_exist">This email is not registered.</string>
     <string name="login_error_user_already_exist">This email is already registered.</string>
     <string name="login_error_unknown">An error occurred. Please, try again later.</string>
-    <string name="login_malformed_email">Invalid email</string>
+    <string name="login_malformed_email">Invalid email format</string>
     <string name="login_wrong_password">Invalid password</string>
     <string name="login_error_missing_email">Please, fill in the email address.</string>
     <string name="login_error_missing_password">Please, fill in the password.</string>

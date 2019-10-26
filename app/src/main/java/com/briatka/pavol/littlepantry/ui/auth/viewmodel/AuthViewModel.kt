@@ -11,13 +11,14 @@ import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLA
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.firestore.FirebaseFirestore
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
-class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) : ViewModel(),
+class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firestore: FirebaseFirestore) : ViewModel(),
     ViewModelContract {
 
     companion object {
@@ -32,6 +33,10 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth) 
     override val loginPassword: BehaviorSubject<String> = BehaviorSubject.create()
     override val registerEmail: BehaviorSubject<String> = BehaviorSubject.create()
     override val registerPassword: BehaviorSubject<String> = BehaviorSubject.create()
+
+    override val userFirstName: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userSurname: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userNickname: BehaviorSubject<String> = BehaviorSubject.create()
 
     init {
         Log.d(TAG, "view model init...")

@@ -14,7 +14,9 @@ import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import dagger.android.support.DaggerFragment
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.android.synthetic.main.fragment_registration_form.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -45,12 +47,63 @@ class RegistrationFormFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        updateEmailField()
+        subscribeToFirstNameField()
+        subscribeToSurnameField()
+        subscribeToNickNameField()
+        subscribeToEmailField()
         subscribeToRegisterButton()
         subscribeToPasswordField()
     }
 
+    override fun onDestroy() {
+        disposables.dispose()
+        super.onDestroy()
+    }
+
+    private fun updateEmailField() {
+        sharedViewModel.registerEmail
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                et_email_address.setText(it)
+            }.let { disposables.add(it) }
+    }
+
+    private fun subscribeToFirstNameField() {
+        et_user_first_name.textChanges()
+            .map {
+                it.trim().toString()
+            }
+            .subscribe(sharedViewModel.userFirstName::onNext).let { disposables.add(it) }
+    }
+
+    private fun subscribeToSurnameField() {
+        et_user_surname.textChanges()
+            .map {
+                it.trim().toString()
+            }
+            .subscribe(sharedViewModel.userSurname::onNext).let { disposables.add(it) }
+    }
+
+    private fun subscribeToNickNameField() {
+        et_user_nickname.textChanges()
+            .map {
+                it.trim().toString()
+            }
+            .subscribe(sharedViewModel.userNickname::onNext).let { disposables.add(it) }
+    }
+
+    private fun subscribeToEmailField() {
+        et_email_address.textChanges()
+            .map {
+                it.trim().toString()
+            }
+            .subscribe(sharedViewModel.registerEmail::onNext).let { disposables.add(it) }
+    }
+
     private fun subscribeToPasswordField() {
-        newPassword.textChanges()
+        et_register_password.textChanges()
             .map {
                 it.trim().toString()
             }

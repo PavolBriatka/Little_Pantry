@@ -13,7 +13,7 @@ import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.viewmodels.ViewModelsProviderFactory
 import dagger.android.support.DaggerAppCompatActivity
-import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.activity_auth.*
 import javax.inject.Inject
 
 class AuthActivity : DaggerAppCompatActivity() {
@@ -42,11 +42,20 @@ class AuthActivity : DaggerAppCompatActivity() {
         viewModel.userState.observe(this, Observer<AuthUserState> { userState ->
             when (userState) {
                 AuthInProgress -> pb_login.visibility = View.VISIBLE
-                AuthCreateNewUser -> navController.navigate(R.id.action_start_registration)
+                AuthCreateNewUser -> {
+                    navController.navigate(R.id.action_start_registration)
+                    pb_login.visibility = View.GONE
+                }
                 AuthRegistrationSuccessful -> navController.navigate(R.id.action_collect_user_info)
                 AuthRegistrationFinalized -> navController.navigate(R.id.action_open_main_activity)
                 AuthLoginSuccessful -> navController.navigate(R.id.action_open_main_activity)
                 is AuthRegistrationFailure -> Toast.makeText(this, userState.error, Toast.LENGTH_LONG).show()
+                is AuthEmailVerificationFailure,
+                AuthUserNotExist,
+                AuthUserAlreadyExist,
+                is AuthLoginFailure,
+                AuthWrongPassword -> pb_login.visibility = View.GONE
+
             }
         })
     }

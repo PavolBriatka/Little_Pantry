@@ -151,7 +151,7 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
                 loginEmail.error = context.getString(R.string.login_malformed_email)
             }
             LOGIN_PASSWORD_ERROR -> {
-                loginPassword.error = context.getString(R.string.login_wrong_password)
+                loginPasswordWrapper.error = context.getString(R.string.login_wrong_password)
             }
             LOGIN_USER_NOT_EXIST -> {
                 loginEmailWrapper.error = context.getString(R.string.login_error_user_not_exist)

@@ -17,7 +17,6 @@ import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_USER_N
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_USER_ALREADY_EXIST
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_login.*
 
 
 class LoginFragment : DaggerFragment() {
@@ -59,19 +58,15 @@ class LoginFragment : DaggerFragment() {
         sharedViewModel.userState.observe(viewLifecycleOwner, Observer { userState ->
             when (userState) {
                 is AuthEmailVerificationFailure -> {
-                    pb_login.visibility = View.GONE
                     pagerAdapter.onCredentialsError(userState.error)
                 }
                 AuthUserNotExist -> {
-                    pb_login.visibility = View.GONE
                     pagerAdapter.onCredentialsError(LOGIN_USER_NOT_EXIST)
                 }
                 AuthUserAlreadyExist -> {
-                    pb_login.visibility = View.GONE
                     pagerAdapter.onCredentialsError(REGISTER_USER_ALREADY_EXIST)
                 }
                 is AuthLoginFailure -> {
-                    pb_login.visibility = View.GONE
                     Snackbar.make(
                         requireView(),
                         getString(R.string.login_error_unknown),
@@ -79,7 +74,6 @@ class LoginFragment : DaggerFragment() {
                     ).show()
                 }
                 AuthWrongPassword -> {
-                    pb_login.visibility = View.GONE
                     pagerAdapter.onCredentialsError(LOGIN_PASSWORD_ERROR)
                 }
             }
