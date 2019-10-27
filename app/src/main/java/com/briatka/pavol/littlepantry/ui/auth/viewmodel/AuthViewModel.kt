@@ -29,7 +29,7 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
     }
 
     private val disposables = CompositeDisposable()
-    val userState = MutableLiveData<AuthUserState>()
+    val authState = MutableLiveData<AuthUserState>()
 
     override val loginEmail: BehaviorSubject<String> = BehaviorSubject.create()
     override val loginPassword: BehaviorSubject<String> = BehaviorSubject.create()
@@ -45,7 +45,7 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
     }
 
     override fun startUserVerification(flag: String) {
-        userState.postValue(AuthInProgress)
+        authState.postValue(AuthInProgress)
         when (flag) {
             LOGIN_FLAG -> {
                 loginEmail.hide()
@@ -75,16 +75,16 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                         if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
                             startUserLogin()
                         } else {
-                            userState.postValue(AuthUserNotExist)
+                            authState.postValue(AuthUserNotExist)
                         }
                     }
                 }
                 REGISTER_FLAG -> {
                     signInMethods?.let {
                         if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
-                            userState.postValue(AuthUserAlreadyExist)
+                            authState.postValue(AuthUserAlreadyExist)
                         } else {
-                            userState.postValue(AuthCreateNewUser)
+                            authState.postValue(AuthCreateNewUser)
                         }
                     }
                 }
@@ -92,8 +92,8 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
         }
             .addOnFailureListener {
                 when (flag) {
-                    LOGIN_FLAG -> userState.postValue(AuthEmailVerificationFailure(LOGIN_EMAIL_ERROR))
-                    REGISTER_FLAG -> userState.postValue(
+                    LOGIN_FLAG -> authState.postValue(AuthEmailVerificationFailure(LOGIN_EMAIL_ERROR))
+                    REGISTER_FLAG -> authState.postValue(
                         AuthEmailVerificationFailure(
                             REGISTER_EMAIL_ERROR
                         )
@@ -120,7 +120,7 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
                 if (task.isSuccessful) {
                     updateDbProfileInfo()
                 } else {
-                    userState.postValue(
+                    authState.postValue(
                         AuthRegistrationFailure(
                             task.exception?.message ?: ERROR_UNSPECIFIED
                         )
@@ -140,13 +140,13 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
             .firstElement()
             .subscribe {newUser ->
                 dbUserReference.set(newUser)
-                    .addOnSuccessListener { userState.postValue(AuthRegistrationSuccessful) }
+                    .addOnSuccessListener { authState.postValue(AuthRegistrationSuccessful) }
                     .addOnFailureListener { Log.w(TAG, it.message) }
             }.let { disposables.add(it) }
     }
 
     override fun finishRegistration() {
-        userState.postValue(AuthRegistrationFinalized)
+        authState.postValue(AuthRegistrationFinalized)
     }
 
     override fun startUserLogin() {
@@ -165,13 +165,13 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "signInWithEmail:success")
-                    userState.postValue(AuthLoginSuccessful)
+                    authState.postValue(AuthLoginSuccessful)
                 } else {
                     Log.e(TAG, "signInWithEmail:failure ${task.exception}")
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        userState.postValue(AuthWrongPassword)
+                        authState.postValue(AuthWrongPassword)
                     } else {
-                        userState.postValue(
+                        authState.postValue(
                             AuthLoginFailure(task.exception?.message ?: ERROR_UNSPECIFIED)
                         )
                     }

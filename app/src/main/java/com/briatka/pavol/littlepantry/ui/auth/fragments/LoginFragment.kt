@@ -54,8 +54,8 @@ class LoginFragment : DaggerFragment() {
     }
 
     private fun subscribeObserver() {
-        sharedViewModel.userState.removeObservers(viewLifecycleOwner)
-        sharedViewModel.userState.observe(viewLifecycleOwner, Observer { userState ->
+        sharedViewModel.authState.removeObservers(viewLifecycleOwner)
+        sharedViewModel.authState.observe(viewLifecycleOwner, Observer { userState ->
             when (userState) {
                 is AuthEmailVerificationFailure -> {
                     pagerAdapter.onCredentialsError(userState.error)

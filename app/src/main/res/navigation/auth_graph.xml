@@ -11,9 +11,6 @@
         android:label="@string/login_fragment_label"
         tools:layout="@layout/fragment_login" />
     <action
-        android:id="@+id/action_user_authenticated"
-        app:destination="@id/mainActivity" />
-    <action
         android:id="@+id/action_start_registration"
         app:destination="@id/registration_graph" />
 
@@ -25,7 +22,7 @@
         tools:layout="@layout/activity_main" />
     <action
         android:id="@+id/action_open_main_activity"
-        app:destination="@id/mainActivity"/>
+        app:destination="@id/mainActivity" />
 
     <navigation
         android:id="@+id/registration_graph"

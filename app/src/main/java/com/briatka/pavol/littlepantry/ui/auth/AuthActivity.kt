@@ -39,7 +39,7 @@ class AuthActivity : DaggerAppCompatActivity() {
     }
 
     private fun subscribeObserver() {
-        viewModel.userState.observe(this, Observer<AuthUserState> { userState ->
+        viewModel.authState.observe(this, Observer<AuthUserState> { userState ->
             when (userState) {
                 AuthInProgress -> pb_login.visibility = View.VISIBLE
                 AuthCreateNewUser -> {

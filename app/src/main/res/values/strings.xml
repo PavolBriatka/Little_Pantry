@@ -20,4 +20,7 @@
     <string name="login_wrong_password">Invalid password</string>
     <string name="login_error_missing_email">Please, fill in the email address.</string>
     <string name="login_error_missing_password">Please, fill in the password.</string>
+    <string name="profile_label">Profile</string>
+    <string name="log_out_label">Log out</string>
+    <string name="auth_activity_graph_label">AuthActivity</string>
 </resources>
