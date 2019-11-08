@@ -9,12 +9,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.briatka.pavol.littlepantry.ConnectivityLiveData
 import com.briatka.pavol.littlepantry.R
+import com.briatka.pavol.littlepantry.ui.main.viewmodel.FirebaseAuthLiveData
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.MainViewModel
 import com.briatka.pavol.littlepantry.viewmodels.ViewModelsProviderFactory
 import com.google.android.material.navigation.NavigationView.OnNavigationItemSelectedListener
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseUser
 import dagger.android.support.DaggerAppCompatActivity
+import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -22,10 +26,15 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
 
     private lateinit var viewModel: MainViewModel
     private lateinit var navController: NavController
+    private lateinit var connectivitySnackbar: Snackbar
 
 
     @Inject
     lateinit var viewModelFactory: ViewModelsProviderFactory
+    @Inject
+    lateinit var firebaseAuthStatus: FirebaseAuthLiveData
+    @Inject
+    lateinit var connectivityStatus: ConnectivityLiveData
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,12 +43,29 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         navController = this.findNavController(R.id.main_nav_host_fragment)
 
+        connectivitySnackbar = Snackbar.make(
+            main_drawer_layout,
+            getString(R.string.snackbar_lost_connection_message),
+            Snackbar.LENGTH_INDEFINITE
+        )
+
         init()
         subscribeToUserState()
+        subscribeToConnectivityStatus()
+    }
+
+    private fun subscribeToConnectivityStatus() {
+        connectivityStatus.observe(this, Observer<Boolean> { isConnected ->
+            if (isConnected) {
+                connectivitySnackbar.dismiss()
+            } else {
+                connectivitySnackbar.show()
+            }
+        })
     }
 
     private fun subscribeToUserState() {
-        viewModel.firebaseAuthLiveData.observe(this, Observer<FirebaseUser> { user ->
+        firebaseAuthStatus.observe(this, Observer<FirebaseUser> { user ->
             if (user == null) {
                 navController.navigate(R.id.action_open_auth_activity)
             } else {

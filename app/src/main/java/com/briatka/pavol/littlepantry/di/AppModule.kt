@@ -1,5 +1,7 @@
 package com.briatka.pavol.littlepantry.di
 
+import android.app.Application
+import com.briatka.pavol.littlepantry.ConnectivityLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
@@ -19,5 +21,11 @@ class AppModule {
     @Provides
     fun provideFirestoreInstance(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
+    }
+
+    @Singleton
+    @Provides
+    fun provideConnectivityLiveData(application: Application): ConnectivityLiveData {
+        return ConnectivityLiveData(application)
     }
 }

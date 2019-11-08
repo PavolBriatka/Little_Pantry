@@ -1,10 +1,11 @@
 package com.briatka.pavol.littlepantry.ui.auth
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.TextView
 import androidx.viewpager.widget.PagerAdapter
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
@@ -15,6 +16,7 @@ import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_USER_N
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_USER_ALREADY_EXIST
+import com.github.ybq.android.spinkit.SpinKitView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding3.view.clicks
@@ -27,8 +29,10 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
 
     private var disposables = CompositeDisposable()
 
-    private lateinit var loginButton: Button
-    private lateinit var registerButton: Button
+    private lateinit var loginButton: TextView
+    private lateinit var loginButtonLoader: SpinKitView
+    private lateinit var registerButton: TextView
+    private lateinit var registerButtonLoader: SpinKitView
 
     private lateinit var loginEmail: TextInputEditText
     private lateinit var loginPassword: TextInputEditText
@@ -45,6 +49,8 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
 
         when (layout.id) {
             R.id.cl_login -> {
+                loginButtonLoader = layout.findViewById(R.id.skv_loading_bar_login)
+
                 loginButton = layout.findViewById(R.id.btn_login_email_password)
                 loginEmail = layout.findViewById(R.id.et_email_address)
                 loginPassword = layout.findViewById(R.id.et_login_password)
@@ -57,6 +63,8 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
                 subscribeToLoginPasswordField()
             }
             R.id.cl_register -> {
+               registerButtonLoader = layout.findViewById(R.id.skv_loading_bar_registration)
+
                 registerButton = layout.findViewById(R.id.btn_register_email_password)
                 registerEmail = layout.findViewById(R.id.et_email_address)
 
@@ -119,7 +127,7 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             }
             .subscribe {
                 sharedViewModel.loginEmail.onNext(it)
-                loginEmailWrapper.isErrorEnabled = false
+                loginEmailWrapper.error = null
             }.let { disposables.add(it) }
     }
 
@@ -130,7 +138,7 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             }
             .subscribe {
                 sharedViewModel.loginPassword.onNext(it)
-                loginPasswordWrapper.isErrorEnabled = false
+                loginPasswordWrapper.error = null
             }.let { disposables.add(it) }
     }
 
@@ -141,14 +149,14 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             }
             .subscribe {
                 sharedViewModel.registerEmail.onNext(it)
-                registerEmailWrapper.isErrorEnabled = false
+                registerEmailWrapper.error = null
             }.let { disposables.add(it) }
     }
 
     fun onCredentialsError(error: String) {
         when (error) {
             LOGIN_EMAIL_ERROR -> {
-                loginEmail.error = context.getString(R.string.login_malformed_email)
+                loginEmailWrapper.error = context.getString(R.string.login_malformed_email)
             }
             LOGIN_PASSWORD_ERROR -> {
                 loginPasswordWrapper.error = context.getString(R.string.login_wrong_password)
@@ -165,6 +173,18 @@ class LoginPagerAdapter(private val context: Context, private val sharedViewMode
             }
         }
         notifyDataSetChanged()
+    }
+
+    fun changeLoadingBarVisibility(makeLoadingBarVisible: Boolean) {
+
+        loginButtonLoader.visibility = if (makeLoadingBarVisible) View.VISIBLE else View.GONE
+        registerButtonLoader.visibility = if (makeLoadingBarVisible) View.VISIBLE else View.GONE
+
+        loginButton.text =
+            if (makeLoadingBarVisible) "" else context.getString(R.string.log_in_label)
+
+        registerButton.text =
+            if (makeLoadingBarVisible) "" else context.getString(R.string.register_label)
     }
 
     fun dispose() {

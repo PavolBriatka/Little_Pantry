@@ -2,6 +2,7 @@ package com.briatka.pavol.littlepantry.ui.auth.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,13 +31,13 @@ class LoginFragment : DaggerFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        Log.e("onCreateView", "called")
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.e("onViewCreated", "called")
         viewPager = view.findViewById(R.id.vp_login_layout)
         pagerAdapter = LoginPagerAdapter(requireContext(), sharedViewModel)
 
@@ -45,11 +46,18 @@ class LoginFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        Log.e("onStart", "called")
         subscribeObserver()
+    }
+
+    override fun onStop() {
+        Log.e("onStop", "called")
+        super.onStop()
     }
 
     override fun onDestroy() {
         pagerAdapter.dispose()
+        Log.e("onDestroy", "called")
         super.onDestroy()
     }
 
@@ -57,16 +65,26 @@ class LoginFragment : DaggerFragment() {
         sharedViewModel.authState.removeObservers(viewLifecycleOwner)
         sharedViewModel.authState.observe(viewLifecycleOwner, Observer { userState ->
             when (userState) {
+                AuthInProgress -> {
+                    pagerAdapter.changeLoadingBarVisibility(true)
+                }
+                AuthCreateNewUser -> {
+                    pagerAdapter.changeLoadingBarVisibility(false)
+                }
                 is AuthEmailVerificationFailure -> {
+                    pagerAdapter.changeLoadingBarVisibility(false)
                     pagerAdapter.onCredentialsError(userState.error)
                 }
                 AuthUserNotExist -> {
+                    pagerAdapter.changeLoadingBarVisibility(false)
                     pagerAdapter.onCredentialsError(LOGIN_USER_NOT_EXIST)
                 }
                 AuthUserAlreadyExist -> {
+                    pagerAdapter.changeLoadingBarVisibility(false)
                     pagerAdapter.onCredentialsError(REGISTER_USER_ALREADY_EXIST)
                 }
                 is AuthLoginFailure -> {
+                    pagerAdapter.changeLoadingBarVisibility(false)
                     Snackbar.make(
                         requireView(),
                         getString(R.string.login_error_unknown),
@@ -75,6 +93,7 @@ class LoginFragment : DaggerFragment() {
                 }
                 AuthWrongPassword -> {
                     pagerAdapter.onCredentialsError(LOGIN_PASSWORD_ERROR)
+                    pagerAdapter.changeLoadingBarVisibility(false)
                 }
             }
         })

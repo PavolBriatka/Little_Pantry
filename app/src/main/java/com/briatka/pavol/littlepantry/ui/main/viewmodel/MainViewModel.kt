@@ -8,8 +8,7 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firestoreDb: FirebaseFirestore,
-    val firebaseAuthLiveData: FirebaseAuthLiveData
+    private val firestoreDb: FirebaseFirestore
 ) : ViewModel(),
     ViewModelContract {
 

@@ -11,8 +11,11 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/medium_margin"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin"
+        android:layout_marginTop="@dimen/medium_margin"
         android:hint="@string/hint_email"
+        app:errorEnabled="true"
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -31,7 +34,9 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/medium_margin"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin"
+        android:layout_marginTop="8dp"
         android:hint="@string/hint_password"
         app:layout_constraintTop_toBottomOf="@id/tl_email_address">
 
@@ -45,18 +50,28 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <TextView
         android:id="@+id/btn_register_email_password"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_background"
-        android:layout_marginStart="@dimen/medium_margin"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="@dimen/medium_margin"
+        android:padding="8dp"
+        android:gravity="center"
         android:text="@string/register_label"
         android:textSize="14sp"
         android:textColor="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tl_register_password" />
+
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/skv_loading_bar_registration"
+        style="@style/SpinKitView.Small.Circle"
+        app:SpinKit_Color="@color/colorAccent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/btn_register_email_password"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

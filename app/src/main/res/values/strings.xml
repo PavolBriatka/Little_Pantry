@@ -23,4 +23,6 @@
     <string name="profile_label">Profile</string>
     <string name="log_out_label">Log out</string>
     <string name="auth_activity_graph_label">AuthActivity</string>
+    <string name="snackbar_lost_connection_message">It seems you\'ve lost Internet connection</string>
+    <string name="forgotten_password_label">Forgotten password</string>
 </resources>
