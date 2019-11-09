@@ -16,7 +16,8 @@
         <activity android:name=".ui.main.MainActivity"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,6 +26,7 @@
         </activity>
         <activity android:name=".ui.auth.AuthActivity"
             android:screenOrientation="sensorPortrait"
+            android:theme="@style/SplashTheme"
             android:windowSoftInputMode="adjustResize" />
     </application>
 

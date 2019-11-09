@@ -25,4 +25,5 @@
     <string name="auth_activity_graph_label">AuthActivity</string>
     <string name="snackbar_lost_connection_message">It seems you\'ve lost Internet connection</string>
     <string name="forgotten_password_label">Forgotten password</string>
+    <string name="sign_up_label">Sign up</string>
 </resources>

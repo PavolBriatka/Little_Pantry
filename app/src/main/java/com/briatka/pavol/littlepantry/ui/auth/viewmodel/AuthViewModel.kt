@@ -7,7 +7,6 @@ import com.briatka.pavol.littlepantry.models.NewUser
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
-import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
@@ -20,7 +19,10 @@ import io.reactivex.functions.Function4
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
-class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, private val firestoreDb: FirebaseFirestore) : ViewModel(),
+class AuthViewModel @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val firestoreDb: FirebaseFirestore
+) : ViewModel(),
     ViewModelContract {
 
     companion object {
@@ -91,14 +93,7 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
             }
         }
             .addOnFailureListener {
-                when (flag) {
-                    LOGIN_FLAG -> authState.postValue(AuthEmailVerificationFailure(LOGIN_EMAIL_ERROR))
-                    REGISTER_FLAG -> authState.postValue(
-                        AuthEmailVerificationFailure(
-                            REGISTER_EMAIL_ERROR
-                        )
-                    )
-                }
+                authState.postValue(AuthEmailVerificationFailure(LOGIN_EMAIL_ERROR))
             }
     }
 
@@ -133,12 +128,15 @@ class AuthViewModel @Inject constructor(private val firebaseAuth: FirebaseAuth, 
     private fun updateDbProfileInfo() {
         val userId = firebaseAuth.currentUser?.uid
         val dbUserReference = firestoreDb.collection("users").document(userId!!)
-        Observable.combineLatest(userFirstName.hide(), userSurname.hide(), userNickname.hide(), registerEmail.hide(),
-            Function4<String, String, String, String, NewUser> {firstName, surname, nickname, email ->
-                NewUser(firstName,surname,nickname,email)
+        Observable.combineLatest(userFirstName.hide(),
+            userSurname.hide(),
+            userNickname.hide(),
+            registerEmail.hide(),
+            Function4<String, String, String, String, NewUser> { firstName, surname, nickname, email ->
+                NewUser(firstName, surname, nickname, email)
             })
             .firstElement()
-            .subscribe {newUser ->
+            .subscribe { newUser ->
                 dbUserReference.set(newUser)
                     .addOnSuccessListener { authState.postValue(AuthRegistrationSuccessful) }
                     .addOnFailureListener { Log.w(TAG, it.message) }
