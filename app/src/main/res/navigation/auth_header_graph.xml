@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/auth_header_graph"
+    app:startDestination="@id/loginHeaderFragment">
+
+    <fragment
+        android:id="@+id/loginHeaderFragment"
+        android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.LoginHeaderFragment"
+        android:label="@string/login_header_fragment_label"
+        tools:layout="@layout/fragment_login_header" />
+
+    <fragment
+        android:id="@+id/registrationHeaderFragment"
+        android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegistrationHeaderFragment"
+        android:label="@string/registration_header_fragment_label"
+        tools:layout="@layout/fragment_registration_header" />
+    <action
+        android:id="@+id/action_show_registration_header"
+        app:destination="@id/registrationHeaderFragment"/>
+
+</navigation>

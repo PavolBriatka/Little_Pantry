@@ -33,10 +33,8 @@ class AuthViewModel @Inject constructor(
     private val disposables = CompositeDisposable()
     val authState = MutableLiveData<AuthUserState>()
 
-    override val loginEmail: BehaviorSubject<String> = BehaviorSubject.create()
-    override val loginPassword: BehaviorSubject<String> = BehaviorSubject.create()
-    override val registerEmail: BehaviorSubject<String> = BehaviorSubject.create()
-    override val registerPassword: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userEmail: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userPassword: BehaviorSubject<String> = BehaviorSubject.create()
 
     override val userFirstName: BehaviorSubject<String> = BehaviorSubject.create()
     override val userSurname: BehaviorSubject<String> = BehaviorSubject.create()
@@ -48,29 +46,18 @@ class AuthViewModel @Inject constructor(
 
     override fun startUserVerification(flag: String) {
         authState.postValue(AuthInProgress)
-        when (flag) {
-            LOGIN_FLAG -> {
-                loginEmail.hide()
-                    .firstElement()
-                    .subscribe {
-                        verifyUserEmail(it, flag)
-                    }.let { disposables.add(it) }
-            }
-            REGISTER_FLAG -> {
-                registerEmail.hide()
-                    .firstElement()
-                    .subscribe {
-                        verifyUserEmail(it, flag)
-                    }.let { disposables.add(it) }
-            }
-        }
+        userEmail.hide()
+            .firstElement()
+            .subscribe {
+                verifyUserEmail(it, flag)
+            }.let { disposables.add(it) }
+
 
     }
 
     private fun verifyUserEmail(email: String, flag: String) {
         firebaseAuth.fetchSignInMethodsForEmail(email).addOnSuccessListener { result ->
             val signInMethods = result.signInMethods
-
             when (flag) {
                 LOGIN_FLAG -> {
                     signInMethods?.let {
@@ -98,8 +85,7 @@ class AuthViewModel @Inject constructor(
     }
 
     override fun startUserRegistration() {
-        Log.e(TAG, "${registerEmail.value}y, ${registerPassword.value}x")
-        Observable.combineLatest(registerEmail.hide(), registerPassword.hide(),
+        Observable.combineLatest(userEmail.hide(), userPassword.hide(),
             BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
             })
@@ -131,7 +117,7 @@ class AuthViewModel @Inject constructor(
         Observable.combineLatest(userFirstName.hide(),
             userSurname.hide(),
             userNickname.hide(),
-            registerEmail.hide(),
+            userEmail.hide(),
             Function4<String, String, String, String, NewUser> { firstName, surname, nickname, email ->
                 NewUser(firstName, surname, nickname, email)
             })
@@ -148,7 +134,7 @@ class AuthViewModel @Inject constructor(
     }
 
     override fun startUserLogin() {
-        Observable.combineLatest(loginEmail.hide(), loginPassword.hide(),
+        Observable.combineLatest(userEmail.hide(), userPassword.hide(),
             BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
             })

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/large_margin"
     tools:context=".ui.auth.fragments.RegistrationFormFragment">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -96,7 +97,8 @@
         android:hint="@string/hint_password"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tl_email_address">
+        app:layout_constraintTop_toBottomOf="@id/tl_email_address"
+        app:passwordToggleEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_register_password"

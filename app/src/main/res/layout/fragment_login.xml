@@ -3,14 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_login"
+    android:layout_marginTop="@dimen/large_margin"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tl_email_address"
@@ -44,6 +39,7 @@
             android:layout_marginEnd="@dimen/medium_margin"
             android:layout_marginBottom="@dimen/margin_small"
             android:hint="@string/hint_password"
+            app:passwordToggleEnabled="true"
             app:errorEnabled="true"
             app:layout_constraintTop_toBottomOf="@id/tl_email_address">
 
@@ -91,7 +87,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_login_email_password" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

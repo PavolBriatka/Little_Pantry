@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.briatka.pavol.littlepantry.ConnectivityLiveData
+import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class AuthActivity : DaggerAppCompatActivity() {
 
     private lateinit var viewModel: AuthViewModel
-    private lateinit var navController: NavController
+    private lateinit var mainNavController: NavController
+    private lateinit var headerNavController: NavController
     private lateinit var connectivitySnackbar: Snackbar
 
     @Inject
@@ -30,35 +32,25 @@ class AuthActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.briatka.pavol.littlepantry.R.layout.activity_auth)
+        setContentView(R.layout.activity_auth)
 
         viewModel = ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
-        navController =
-            this.findNavController(com.briatka.pavol.littlepantry.R.id.auth_nav_host_fragment)
+        mainNavController =
+            this.findNavController(R.id.auth_nav_host_fragment)
+        headerNavController =
+            this.findNavController(R.id.auth_nav_header_host_fragment)
 
         connectivitySnackbar = Snackbar.make(
             fl_auth_activity,
-            getString(com.briatka.pavol.littlepantry.R.string.snackbar_lost_connection_message),
+            getString(R.string.snackbar_lost_connection_message),
             Snackbar.LENGTH_INDEFINITE
         )
-    }
 
-    override fun onStart() {
-        super.onStart()
         subscribeAuthenticationStatus()
         subscribeToConnectivityStatus()
     }
+    
 
-    override fun onResume() {
-        super.onResume()
-        enableFullscreen()
-    }
-
-    private fun enableFullscreen() {
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
-    }
 
     private fun subscribeToConnectivityStatus() {
         connectivityStatus.observe(this, Observer<Boolean> { isConnected ->
@@ -76,12 +68,13 @@ class AuthActivity : DaggerAppCompatActivity() {
                 AuthInProgress -> {
                 }
                 AuthCreateNewUser -> {
-                    navController.navigate(com.briatka.pavol.littlepantry.R.id.action_start_registration)
+                    mainNavController.navigate(R.id.action_start_registration)
+                    headerNavController.navigate(R.id.action_show_registration_header)
 
                 }
-                AuthRegistrationSuccessful -> navController.navigate(com.briatka.pavol.littlepantry.R.id.action_collect_user_info)
-                AuthRegistrationFinalized -> navController.navigate(com.briatka.pavol.littlepantry.R.id.action_open_main_activity)
-                AuthLoginSuccessful -> navController.navigate(com.briatka.pavol.littlepantry.R.id.action_open_main_activity)
+                AuthRegistrationSuccessful -> mainNavController.navigate(R.id.action_collect_user_info)
+                AuthRegistrationFinalized -> mainNavController.navigate(R.id.action_open_main_activity)
+                AuthLoginSuccessful -> mainNavController.navigate(R.id.action_open_main_activity)
                 is AuthRegistrationFailure -> Toast.makeText(
                     this,
                     userState.error,

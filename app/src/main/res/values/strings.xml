@@ -26,4 +26,6 @@
     <string name="snackbar_lost_connection_message">It seems you\'ve lost Internet connection</string>
     <string name="forgotten_password_label">Forgotten password</string>
     <string name="sign_up_label">Sign up</string>
+    <string name="login_header_fragment_label">Login Header Fragment</string>
+    <string name="registration_header_fragment_label">Registration Header Fragment</string>
 </resources>

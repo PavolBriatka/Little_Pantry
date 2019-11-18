@@ -10,10 +10,11 @@ import androidx.lifecycle.Observer
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
-import com.briatka.pavol.littlepantry.utils.AuthConstants
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_PASSWORD_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_USER_NOT_EXIST
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_USER_ALREADY_EXIST
 import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
@@ -45,6 +46,7 @@ class LoginFragment : DaggerFragment() {
         super.onStart()
         subscribeObserver()
         subscribeToLoginButton()
+        subscribeToRegisterButton()
         subscribeToLoginEmailField()
         subscribeToLoginPasswordField()
     }
@@ -95,23 +97,23 @@ class LoginFragment : DaggerFragment() {
                         requireContext().getString(R.string.login_error_missing_email)
                     et_login_password.text.isNullOrBlank() -> tl_login_password.error =
                         requireContext().getString(R.string.login_error_missing_password)
-                    else -> sharedViewModel.startUserVerification(AuthConstants.LOGIN_FLAG)
+                    else -> sharedViewModel.startUserVerification(LOGIN_FLAG)
                 }
             }.let { disposables.add(it) }
     }
 
-    /*
-    * private fun subscribeToRegisterButton() {
-        registerButton.clicks()
+     private fun subscribeToRegisterButton() {
+        tv_sign_up.clicks()
             .subscribe {
-                if (registerEmail.text?.isBlank()!!) {
-                    registerEmailWrapper.error =
-                        context.getString(R.string.login_error_missing_email)
-                } else {
-                    sharedViewModel.startUserVerification(REGISTER_FLAG)
+                when {
+                    et_email_address.text.isNullOrBlank() -> tl_email_address.error =
+                        requireContext().getString(R.string.login_error_missing_email)
+                    et_login_password.text.isNullOrBlank() -> tl_login_password.error =
+                        requireContext().getString(R.string.login_error_missing_password)
+                    else -> sharedViewModel.startUserVerification(REGISTER_FLAG)
                 }
             }.let { disposables.add(it) }
-    }*/
+    }
 
     private fun subscribeToLoginEmailField() {
         et_email_address.textChanges()
@@ -119,7 +121,7 @@ class LoginFragment : DaggerFragment() {
                 it.toString().trim()
             }
             .subscribe {
-                sharedViewModel.loginEmail.onNext(it)
+                sharedViewModel.userEmail.onNext(it)
                 tl_email_address.error = null
             }.let { disposables.add(it) }
     }
@@ -130,7 +132,7 @@ class LoginFragment : DaggerFragment() {
                 it.toString().trim()
             }
             .subscribe {
-                sharedViewModel.loginPassword.onNext(it)
+                sharedViewModel.userPassword.onNext(it)
                 tl_login_password.error = null
             }.let { disposables.add(it) }
     }

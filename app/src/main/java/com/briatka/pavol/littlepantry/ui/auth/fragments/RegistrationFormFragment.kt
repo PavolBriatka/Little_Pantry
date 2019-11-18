@@ -48,12 +48,17 @@ class RegistrationFormFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
         updateEmailField()
+        updatePasswordField()
         subscribeToFirstNameField()
         subscribeToSurnameField()
         subscribeToNickNameField()
-        subscribeToEmailField()
         subscribeToRegisterButton()
         subscribeToPasswordField()
+    }
+
+    override fun onStop() {
+        disposables.clear()
+        super.onStop()
     }
 
     override fun onDestroy() {
@@ -62,12 +67,21 @@ class RegistrationFormFragment : DaggerFragment() {
     }
 
     private fun updateEmailField() {
-        sharedViewModel.registerEmail
+        sharedViewModel.userEmail
             .observeOn(AndroidSchedulers.mainThread())
             .firstElement()
             .subscribe {
                 et_email_address.setText(it)
                 et_email_address.isEnabled = false
+            }.let { disposables.add(it) }
+    }
+
+    private fun updatePasswordField() {
+        sharedViewModel.userPassword
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                et_register_password.setText(it)
             }.let { disposables.add(it) }
     }
 
@@ -95,20 +109,12 @@ class RegistrationFormFragment : DaggerFragment() {
             .subscribe(sharedViewModel.userNickname::onNext).let { disposables.add(it) }
     }
 
-    private fun subscribeToEmailField() {
-        et_email_address.textChanges()
-            .map {
-                it.trim().toString()
-            }
-            .subscribe(sharedViewModel.registerEmail::onNext).let { disposables.add(it) }
-    }
-
     private fun subscribeToPasswordField() {
         et_register_password.textChanges()
             .map {
                 it.trim().toString()
             }
-            .subscribe(sharedViewModel.registerPassword::onNext).let { disposables.add(it) }
+            .subscribe(sharedViewModel.userPassword::onNext).let { disposables.add(it) }
     }
 
     private fun subscribeToRegisterButton() {

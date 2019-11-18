@@ -4,10 +4,8 @@ import io.reactivex.subjects.BehaviorSubject
 
 interface ViewModelContract {
 
-    val loginEmail: BehaviorSubject<String>
-    val loginPassword: BehaviorSubject<String>
-    val registerEmail: BehaviorSubject<String>
-    val registerPassword: BehaviorSubject<String>
+    val userEmail: BehaviorSubject<String>
+    val userPassword: BehaviorSubject<String>
 
     val userFirstName: BehaviorSubject<String>
     val userSurname: BehaviorSubject<String>
