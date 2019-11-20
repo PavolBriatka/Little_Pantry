@@ -45,7 +45,7 @@ class AuthViewModel @Inject constructor(
     }
 
     override fun startUserVerification(flag: String) {
-        authState.postValue(AuthInProgress)
+        authState.postValue(AuthInProgress(flag))
         userEmail.hide()
             .firstElement()
             .subscribe {

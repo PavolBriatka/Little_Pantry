@@ -2,7 +2,7 @@ package com.briatka.pavol.littlepantry.ui.auth.viewmodel
 
 sealed class AuthUserState {
 
-    object AuthInProgress: AuthUserState()
+    class AuthInProgress(val flag: String): AuthUserState()
     class AuthEmailVerificationFailure(val error: String): AuthUserState()
 
     //for login

@@ -3,16 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.auth.fragments.RegistrationHeaderFragment">
-
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/margin_small"
-        app:cardBackgroundColor="@color/lightPrimaryColor"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="6dp">
 
     <com.shuhart.stepview.StepView
         android:layout_gravity="center"
@@ -38,6 +31,5 @@
         app:sv_stepNumberTextSize="12sp"
         app:sv_animationType="All"/>
 
-    </androidx.cardview.widget.CardView>
 
 </FrameLayout>

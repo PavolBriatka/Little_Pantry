@@ -65,8 +65,6 @@ class AuthActivity : DaggerAppCompatActivity() {
     private fun subscribeAuthenticationStatus() {
         viewModel.authState.observe(this, Observer<AuthUserState> { userState ->
             when (userState) {
-                AuthInProgress -> {
-                }
                 AuthCreateNewUser -> {
                     mainNavController.navigate(R.id.action_start_registration)
                     headerNavController.navigate(R.id.action_show_registration_header)

@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="@dimen/large_margin"
+    android:background="@android:color/white"
+    android:paddingTop="@dimen/large_margin"
     tools:context=".ui.auth.fragments.RegistrationFormFragment">
 
     <com.google.android.material.textfield.TextInputLayout
@@ -110,16 +111,14 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-    <Button
+    <TextView
         android:id="@+id/btn_create_new_user"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin"
-        android:layout_marginTop="@dimen/medium_margin"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="@dimen/medium_margin"
         android:background="@drawable/btn_background"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:gravity="center"
+        android:padding="@dimen/margin_small"
         android:text="@string/button_create_account"
         android:textColor="@color/colorAccent"
         android:textSize="14sp"

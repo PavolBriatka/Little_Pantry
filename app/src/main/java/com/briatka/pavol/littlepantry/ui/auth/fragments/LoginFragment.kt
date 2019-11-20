@@ -37,11 +37,6 @@ class LoginFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-    }
-
     override fun onStart() {
         super.onStart()
         subscribeObserver()
@@ -55,26 +50,26 @@ class LoginFragment : DaggerFragment() {
         sharedViewModel.authState.removeObservers(viewLifecycleOwner)
         sharedViewModel.authState.observe(viewLifecycleOwner, Observer { userState ->
             when (userState) {
-                AuthInProgress -> {
-                    changeLoadingBarVisibility(true)
+                is AuthInProgress -> {
+                    changeLoadingBarVisibility(userState.flag)
                 }
                 AuthCreateNewUser -> {
-                    changeLoadingBarVisibility(false)
+                    changeLoadingBarVisibility()
                 }
                 is AuthEmailVerificationFailure -> {
-                    changeLoadingBarVisibility(false)
+                    changeLoadingBarVisibility()
                     onCredentialsError(userState.error)
                 }
                 AuthUserNotExist -> {
-                    changeLoadingBarVisibility(false)
+                    changeLoadingBarVisibility()
                     onCredentialsError(LOGIN_USER_NOT_EXIST)
                 }
                 AuthUserAlreadyExist -> {
-                    changeLoadingBarVisibility(false)
+                    changeLoadingBarVisibility()
                     onCredentialsError(REGISTER_USER_ALREADY_EXIST)
                 }
                 is AuthLoginFailure -> {
-                    changeLoadingBarVisibility(false)
+                    changeLoadingBarVisibility()
                     Snackbar.make(
                         requireView(),
                         getString(R.string.login_error_unknown),
@@ -83,7 +78,7 @@ class LoginFragment : DaggerFragment() {
                 }
                 AuthWrongPassword -> {
                     onCredentialsError(LOGIN_PASSWORD_ERROR)
-                    changeLoadingBarVisibility(false)
+                    changeLoadingBarVisibility()
                 }
             }
         })
@@ -102,7 +97,7 @@ class LoginFragment : DaggerFragment() {
             }.let { disposables.add(it) }
     }
 
-     private fun subscribeToRegisterButton() {
+    private fun subscribeToRegisterButton() {
         tv_sign_up.clicks()
             .subscribe {
                 when {
@@ -137,13 +132,24 @@ class LoginFragment : DaggerFragment() {
             }.let { disposables.add(it) }
     }
 
-    private fun changeLoadingBarVisibility(makeLoadingBarVisible: Boolean) {
+    private fun changeLoadingBarVisibility(flag: String? = null) {
 
-        skv_loading_bar_login.visibility = if (makeLoadingBarVisible) View.VISIBLE else View.GONE
-
-        btn_login_email_password.text =
-            if (makeLoadingBarVisible) "" else requireContext().getString(R.string.log_in_label)
-
+        when (flag) {
+            null -> {
+                skv_loading_bar_login.visibility = View.GONE
+                skv_loading_bar_register.visibility = View.GONE
+                btn_login_email_password.text = requireContext().getString(R.string.log_in_label)
+                tv_sign_up.text = requireContext().getString(R.string.sign_up_label)
+            }
+            LOGIN_FLAG -> {
+                skv_loading_bar_login.visibility = View.VISIBLE
+                btn_login_email_password.text = ""
+            }
+            REGISTER_FLAG -> {
+                skv_loading_bar_register.visibility = View.VISIBLE
+                tv_sign_up.text = ""
+            }
+        }
     }
 
     private fun onCredentialsError(error: String) {

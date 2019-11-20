@@ -19,13 +19,8 @@ import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_registration_form.*
 import java.util.concurrent.TimeUnit
 
-/**
- * A simple [Fragment] subclass.
- */
 class RegistrationFormFragment : DaggerFragment() {
 
-    private lateinit var registerButton: Button
-    private lateinit var newPassword: TextInputEditText
 
     val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
@@ -36,13 +31,6 @@ class RegistrationFormFragment : DaggerFragment() {
     ): View? {
 
         return inflater.inflate(R.layout.fragment_registration_form, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        registerButton = view.findViewById(R.id.btn_create_new_user)
-        newPassword = view.findViewById(R.id.et_register_password)
     }
 
     override fun onStart() {
@@ -118,7 +106,7 @@ class RegistrationFormFragment : DaggerFragment() {
     }
 
     private fun subscribeToRegisterButton() {
-        registerButton.clicks()
+        btn_create_new_user.clicks()
             .throttleFirst(500, TimeUnit.MILLISECONDS)
             .subscribe {
                 sharedViewModel.startUserRegistration()
