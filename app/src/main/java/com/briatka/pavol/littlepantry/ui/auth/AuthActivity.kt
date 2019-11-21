@@ -1,5 +1,6 @@
 package com.briatka.pavol.littlepantry.ui.auth
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer
@@ -87,5 +88,9 @@ class AuthActivity : DaggerAppCompatActivity() {
 
             }
         })
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
     }
 }

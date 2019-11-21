@@ -9,5 +9,6 @@ class AuthConstants {
         const val LOGIN_PASSWORD_ERROR = "login_password_error"
         const val LOGIN_USER_NOT_EXIST = "login_user_not_exist"
         const val REGISTER_USER_ALREADY_EXIST = "register_user_already_exist"
+        const val REQUEST_IMAGE_CAPTURE = 1
     }
 }

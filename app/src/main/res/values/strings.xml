@@ -30,4 +30,6 @@
     <string name="registration_header_fragment_label">Registration Header Fragment</string>
     <string name="update_profile_button">Update profile</string>
     <string name="upload_profile_photo_label">Upload profile photo</string>
+    <string name="cd_take_picture">Take picture</string>
+    <string name="cd_upload_picture_from_gallery">Upload picture from gallery</string>
 </resources>
