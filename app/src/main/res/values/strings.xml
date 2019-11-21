@@ -28,4 +28,6 @@
     <string name="sign_up_label">Sign up</string>
     <string name="login_header_fragment_label">Login Header Fragment</string>
     <string name="registration_header_fragment_label">Registration Header Fragment</string>
+    <string name="update_profile_button">Update profile</string>
+    <string name="upload_profile_photo_label">Upload profile photo</string>
 </resources>

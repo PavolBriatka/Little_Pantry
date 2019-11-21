@@ -87,6 +87,8 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     //Step view library
     implementation 'com.shuhart.stepview:stepview:1.5.0'
+    //Custom round ImageView
+    implementation 'com.mikhaellopez:circularimageview:4.1.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'

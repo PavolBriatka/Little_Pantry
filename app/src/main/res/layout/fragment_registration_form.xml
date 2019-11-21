@@ -2,11 +2,41 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:paddingTop="@dimen/large_margin"
+    android:paddingTop="48dp"
     tools:context=".ui.auth.fragments.RegistrationFormFragment">
+
+    <com.shuhart.stepview.StepView
+        android:id="@+id/sv_registration_header"
+        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/medium_margin"
+        android:paddingEnd="@dimen/medium_margin"
+        app:sv_stepsNumber="3"
+        app:sv_selectedCircleColor="@color/colorAccent"
+        app:sv_selectedTextColor="@color/colorAccent"
+        app:sv_stepLineWidth="2dp"
+        app:sv_stepPadding="4dp"
+        app:sv_nextTextColor="@color/grey"
+        app:sv_nextStepLineColor="@color/grey"
+        app:sv_nextStepCircleEnabled="true"
+        app:sv_doneCircleColor="@color/colorAccent"
+        app:sv_doneStepLineColor="@color/colorAccent"
+        app:sv_doneStepMarkColor="@android:color/white"
+        app:sv_doneCircleRadius="12dp"
+        app:sv_selectedCircleRadius="12dp"
+        app:sv_selectedStepNumberColor="@android:color/white"
+        app:sv_stepViewStyle="@style/StepView"
+        app:sv_stepNumberTextSize="12sp"
+        app:sv_animationType="All"
+        app:sv_animationDuration="300"
+        android:paddingBottom="@dimen/extra_large_margin"
+        app:layout_constraintTop_toTopOf="parent"
+        android:transitionName="header_step_view"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tl_user_first_name"
@@ -17,7 +47,7 @@
         android:hint="@string/hint_first_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/sv_registration_header">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/et_user_first_name"

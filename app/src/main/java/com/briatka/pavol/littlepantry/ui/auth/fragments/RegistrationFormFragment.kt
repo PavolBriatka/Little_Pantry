@@ -5,12 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.fragment.app.Fragment
+import android.view.animation.AnimationUtils
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import com.briatka.pavol.littlepantry.R
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
-import com.google.android.material.textfield.TextInputEditText
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import dagger.android.support.DaggerFragment
@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit
 class RegistrationFormFragment : DaggerFragment() {
 
 
-    val sharedViewModel: AuthViewModel by activityViewModels()
+    private val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
 
     override fun onCreateView(
@@ -31,6 +31,11 @@ class RegistrationFormFragment : DaggerFragment() {
     ): View? {
 
         return inflater.inflate(R.layout.fragment_registration_form, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        animateViewsIn(view)
     }
 
     override fun onStart() {
@@ -109,7 +114,28 @@ class RegistrationFormFragment : DaggerFragment() {
         btn_create_new_user.clicks()
             .throttleFirst(500, TimeUnit.MILLISECONDS)
             .subscribe {
-                sharedViewModel.startUserRegistration()
+                sharedViewModel.authState.postValue(AuthUserState.AuthRegistrationSuccessful)
             }.let { disposables.add(it) }
+    }
+
+    private fun animateViewsIn(view: View) {
+        val root = view.findViewById<ConstraintLayout>(R.id.cl_root)
+        val count = root.childCount
+        var offset = resources.getDimensionPixelSize(R.dimen.offset_y).toFloat()
+        val interpolator =
+            AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in)
+
+        for (i in 1 until count) {
+            val mView = root.getChildAt(i)
+            mView.translationX = offset
+            mView.alpha = 0.5f
+            mView.animate()
+                .translationX(0f)
+                .alpha(1f)
+                .setInterpolator(interpolator)
+                .setDuration(600L)
+                .start()
+            offset *= 1.5f
+        }
     }
 }
