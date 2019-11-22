@@ -1,22 +1,30 @@
 package com.briatka.pavol.littlepantry.ui.auth.fragments
 
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.media.ThumbnailUtils
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.widget.Toast
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.ProfilePictureError
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PERMISSION_REQUEST_CAMERA
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_IMAGE_CAPTURE
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_PICK_IMAGE_FROM_GALLERY
 import com.briatka.pavol.littlepantry.utils.PhotoUtils
 import com.jakewharton.rxbinding3.view.clicks
 import dagger.android.support.DaggerFragment
@@ -36,7 +44,7 @@ class RegisterUserProfileFragment : DaggerFragment() {
 
     private val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
-    private lateinit var tempFilePath: String
+    private var tempFilePath: String? = null
     private lateinit var profilePicture: Bitmap
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,21 +83,78 @@ class RegisterUserProfileFragment : DaggerFragment() {
         super.onStart()
         subscribeToUpdateProfileButton()
         subscribeToTakePhotoButton()
+        subscribeToPickFromGalleryButton()
+        subscribeToProfilePictureState()
+    }
+
+    private fun subscribeToProfilePictureState() {
+        sharedViewModel.userProfilePhotoState.hide()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe { state ->
+                when (state) {
+                    is ProfilePictureError -> {
+                        Toast.makeText(requireContext(), state.error, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }.let { disposables.add(it) }
+    }
+
+    override fun onStop() {
+        disposables.clear()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        disposables.dispose()
+        super.onDestroy()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
-            if (resultCode == Activity.RESULT_OK) {
-                processImage()
+        when (requestCode) {
+            REQUEST_IMAGE_CAPTURE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    processImage()
+                } else {
+                    sharedViewModel.userProfilePhotoState.onNext(
+                        ProfilePictureError(getString(R.string.error_processing_profile_picture))
+                    )
+                }
+            }
+            REQUEST_PICK_IMAGE_FROM_GALLERY -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    processImageFromGallery(data?.data)
+                } else {
+                    sharedViewModel.userProfilePhotoState.onNext(
+                        ProfilePictureError(getString(R.string.error_processing_profile_picture))
+                    )
+                }
             }
         }
     }
 
-    private fun processImage() {
+    private fun subscribeToPickFromGalleryButton() {
+        iv_select_picture.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .throttleFirst(1000, TimeUnit.MILLISECONDS)
+            .subscribe {
 
-        profilePicture = PhotoUtils.resampleImage(tempFilePath, requireContext())
-        val resizedPicture = ThumbnailUtils.extractThumbnail(profilePicture, 200, 200)
-        civ_profile_photo.setImageBitmap(resizedPicture)
+                tempFilePath?.let {
+                    PhotoUtils.deleteFileFromCache(tempFilePath!!)
+                }
+
+                if (checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions(
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                        READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
+                    )
+                } else {
+                    openGallery()
+                }
+            }.let { disposables.add(it) }
     }
 
     private fun subscribeToTakePhotoButton() {
@@ -97,7 +162,23 @@ class RegisterUserProfileFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .throttleFirst(1000, TimeUnit.MILLISECONDS)
             .subscribe {
-                dispatchTakePictureIntent()
+
+                tempFilePath?.let {
+                    PhotoUtils.deleteFileFromCache(tempFilePath!!)
+                }
+
+                if (checkSelfPermission(
+                        requireContext(),
+                        Manifest.permission.CAMERA
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    requestPermissions(
+                        arrayOf(Manifest.permission.CAMERA),
+                        PERMISSION_REQUEST_CAMERA
+                    )
+                } else {
+                    dispatchTakePictureIntent()
+                }
             }.let { disposables.add(it) }
     }
 
@@ -108,6 +189,35 @@ class RegisterUserProfileFragment : DaggerFragment() {
             .subscribe {
                 //TODO: redirect to overview screen
             }.let { disposables.add(it) }
+    }
+
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+        }
+        startActivityForResult(intent, REQUEST_PICK_IMAGE_FROM_GALLERY)
+    }
+
+    private fun processImageFromGallery(uri: Uri?) {
+        if (uri != null) {
+            val tempFilePath = PhotoUtils.getPathFromUri(requireContext(), uri)
+            if (tempFilePath != null) {
+                civ_profile_photo.setImageBitmap(
+                    PhotoUtils.resampleImage(
+                        tempFilePath,
+                        requireContext()
+                    )
+                )
+            } else {
+                sharedViewModel.userProfilePhotoState.onNext(
+                    ProfilePictureError(getString(R.string.unsupported_picture_format))
+                )
+            }
+        } else {
+            sharedViewModel.userProfilePhotoState.onNext(
+                ProfilePictureError(getString(R.string.error_processing_profile_picture))
+            )
+        }
     }
 
     private fun dispatchTakePictureIntent() {
@@ -121,7 +231,8 @@ class RegisterUserProfileFragment : DaggerFragment() {
 
         tempFile?.let {
             tempFilePath = it.absolutePath
-            val pictureUri = FileProvider.getUriForFile(requireContext(), FILE_PROVIDER_AUTHORITY, tempFile)
+            val pictureUri =
+                FileProvider.getUriForFile(requireContext(), FILE_PROVIDER_AUTHORITY, tempFile)
 
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
                 takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
@@ -130,8 +241,40 @@ class RegisterUserProfileFragment : DaggerFragment() {
                 }
             }
         }
+    }
 
+    private fun processImage() {
 
+        profilePicture = PhotoUtils.fixRotation(
+            PhotoUtils.resampleImage(tempFilePath!!, requireContext()),
+            tempFilePath!!
+        )
+        civ_profile_photo.setImageBitmap(profilePicture)
+    }
 
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            PERMISSION_REQUEST_CAMERA ->
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchTakePictureIntent()
+                } else {
+                    //TODO: fix
+                }
+            READ_EXTERNAL_STORAGE_PERMISSION_REQUEST ->
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openGallery()
+                } else {
+                    //TODO: check with PO what should be done in this case
+                    Toast.makeText(
+                        requireContext(),
+                        "Can't open gallery without permission",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+        }
     }
 }

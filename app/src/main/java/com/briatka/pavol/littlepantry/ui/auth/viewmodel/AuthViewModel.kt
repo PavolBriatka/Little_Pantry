@@ -17,6 +17,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function4
 import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(
@@ -39,6 +40,7 @@ class AuthViewModel @Inject constructor(
     override val userFirstName: BehaviorSubject<String> = BehaviorSubject.create()
     override val userSurname: BehaviorSubject<String> = BehaviorSubject.create()
     override val userNickname: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userProfilePhotoState: PublishSubject<ProfilePictureState> = PublishSubject.create()
 
     init {
         Log.d(TAG, "view model init...")
