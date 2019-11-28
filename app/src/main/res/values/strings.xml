@@ -35,4 +35,6 @@
     <string name="error_processing_profile_picture">Something went wrong. Please try again</string>
     <string name="unsupported_picture_format">Unsupported picture format</string>
     <string name="cd_app_logo">App Logo</string>
+    <string name="cd_rotate_profile_picture_left">Rotate profile picture left</string>
+    <string name="cd_rotate_profile_picture_right">Rotate profile picture right</string>
 </resources>

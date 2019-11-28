@@ -1,76 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingTop="48dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.auth.fragments.RegisterUserProfileFragment">
 
     <com.shuhart.stepview.StepView
         android:id="@+id/sv_registration_header"
-        android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:paddingStart="@dimen/medium_margin"
         android:paddingEnd="@dimen/medium_margin"
-        app:sv_stepsNumber="3"
-        app:sv_selectedCircleColor="@color/colorAccent"
-        app:sv_selectedTextColor="@color/colorAccent"
-        app:sv_stepLineWidth="2dp"
-        app:sv_stepPadding="4dp"
-        app:sv_nextTextColor="@color/grey"
-        app:sv_nextStepLineColor="@color/grey"
-        app:sv_nextStepCircleEnabled="true"
+        android:paddingBottom="@dimen/extra_large_margin"
+        android:transitionName="header_step_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:sv_animationDuration="300"
+        app:sv_animationType="All"
         app:sv_doneCircleColor="@color/colorAccent"
+        app:sv_doneCircleRadius="12dp"
         app:sv_doneStepLineColor="@color/colorAccent"
         app:sv_doneStepMarkColor="@android:color/white"
-        app:sv_doneCircleRadius="12dp"
+        app:sv_nextStepCircleEnabled="true"
+        app:sv_nextStepLineColor="@color/grey"
+        app:sv_nextTextColor="@color/grey"
+        app:sv_selectedCircleColor="@color/colorAccent"
         app:sv_selectedCircleRadius="12dp"
         app:sv_selectedStepNumberColor="@android:color/white"
-        app:sv_stepViewStyle="@style/StepView"
+        app:sv_selectedTextColor="@color/colorAccent"
+        app:sv_stepLineWidth="2dp"
         app:sv_stepNumberTextSize="12sp"
-        app:sv_animationType="All"
-        app:sv_animationDuration="300"
-        android:paddingBottom="@dimen/extra_large_margin"
-        app:layout_constraintTop_toTopOf="parent"
-        android:transitionName="header_step_view"/>
+        app:sv_stepPadding="4dp"
+        app:sv_stepViewStyle="@style/StepView"
+        app:sv_stepsNumber="3" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/civ_profile_photo"
         android:layout_width="200dp"
         android:layout_height="200dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/ic_blank_profile"
-        app:layout_constraintTop_toBottomOf="@id/sv_registration_header"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:civ_border="true"
         app:civ_border_color="@color/colorAccent"
-        app:civ_border_width="2dp"/>
+        app:civ_border_width="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sv_registration_header" />
 
-    <TextView
-        android:id="@+id/tv_upload_photo_label"
+    <ImageView
+        android:id="@+id/iv_rotate_left"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/upload_profile_photo_label"
-        android:textColor="@color/colorAccent"
-        android:visibility="gone"
-        android:layout_margin="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/civ_profile_photo"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        android:layout_marginTop="84dp"
+        android:layout_marginEnd="@dimen/margin_small"
+        android:background="@drawable/ic_icon_background"
+        android:contentDescription="@string/cd_rotate_profile_picture_left"
+        android:padding="6dp"
+        android:src="@drawable/ic_rotate_left"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintEnd_toStartOf="@id/civ_profile_photo" />
+
+    <ImageView
+        android:id="@+id/iv_rotate_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_small"
+        android:layout_marginTop="84dp"
+        android:background="@drawable/ic_icon_background"
+        android:contentDescription="@string/cd_rotate_profile_picture_right"
+        android:padding="6dp"
+        android:src="@drawable/ic_rotate_right"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        app:layout_constraintStart_toEndOf="@id/civ_profile_photo" />
 
     <LinearLayout
         android:id="@+id/upload_options"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_small"
         android:alpha="1"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:layout_marginTop="@dimen/margin_small"
-        app:layout_constraintTop_toBottomOf="@id/tv_upload_photo_label"
-        app:layout_constraintEnd_toEndOf="@id/civ_profile_photo">
+        app:layout_constraintEnd_toEndOf="@id/civ_profile_photo"
+        app:layout_constraintTop_toBottomOf="@id/civ_profile_photo">
 
         <ImageView
             android:id="@+id/iv_take_picture"
@@ -78,8 +93,8 @@
             android:layout_height="48dp"
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:src="@drawable/ic_photo_camera"
-            android:contentDescription="@string/cd_take_picture" />
+            android:contentDescription="@string/cd_take_picture"
+            android:src="@drawable/ic_photo_camera" />
 
         <ImageView
             android:id="@+id/iv_select_picture"
@@ -87,8 +102,8 @@
             android:layout_height="48dp"
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:src="@drawable/ic_photo_library"
-            android:contentDescription="@string/cd_upload_picture_from_gallery" />
+            android:contentDescription="@string/cd_upload_picture_from_gallery"
+            android:src="@drawable/ic_photo_library" />
 
     </LinearLayout>
 
@@ -103,7 +118,14 @@
         android:text="@string/update_profile_button"
         android:textColor="@color/colorAccent"
         android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="210dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

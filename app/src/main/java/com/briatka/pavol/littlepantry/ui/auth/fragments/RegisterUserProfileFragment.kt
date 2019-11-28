@@ -45,7 +45,7 @@ class RegisterUserProfileFragment : DaggerFragment() {
     private val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
     private var tempFilePath: String? = null
-    private lateinit var profilePicture: Bitmap
+    private var profilePicture: Bitmap? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +85,9 @@ class RegisterUserProfileFragment : DaggerFragment() {
         subscribeToTakePhotoButton()
         subscribeToPickFromGalleryButton()
         subscribeToProfilePictureState()
+        subscribeToRotateRightButton()
+        subscribeToRotateLeftButton()
+        subscribeToProfilePhoto()
     }
 
     private fun subscribeToProfilePictureState() {
@@ -100,6 +103,9 @@ class RegisterUserProfileFragment : DaggerFragment() {
     }
 
     override fun onStop() {
+        tempFilePath?.let {
+            PhotoUtils.deleteFileFromCache(tempFilePath!!)
+        }
         disposables.clear()
         super.onStop()
     }
@@ -113,8 +119,8 @@ class RegisterUserProfileFragment : DaggerFragment() {
         when (requestCode) {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
-                    processImage()
-                } else {
+                    processImageFromCamera()
+                } else if (resultCode != Activity.RESULT_CANCELED) {
                     sharedViewModel.userProfilePhotoState.onNext(
                         ProfilePictureError(getString(R.string.error_processing_profile_picture))
                     )
@@ -123,7 +129,7 @@ class RegisterUserProfileFragment : DaggerFragment() {
             REQUEST_PICK_IMAGE_FROM_GALLERY -> {
                 if (resultCode == Activity.RESULT_OK) {
                     processImageFromGallery(data?.data)
-                } else {
+                } else if (resultCode != Activity.RESULT_CANCELED) {
                     sharedViewModel.userProfilePhotoState.onNext(
                         ProfilePictureError(getString(R.string.error_processing_profile_picture))
                     )
@@ -182,6 +188,37 @@ class RegisterUserProfileFragment : DaggerFragment() {
             }.let { disposables.add(it) }
     }
 
+    private fun subscribeToProfilePhoto() {
+        sharedViewModel.userProfilePhoto.hide()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                civ_profile_photo.setImageBitmap(it)
+                profilePicture = it
+            }.let { disposables.add(it) }
+    }
+
+    private fun subscribeToRotateRightButton() {
+        iv_rotate_right.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                profilePicture?.let{
+                    sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
+                }
+
+            }.let { disposables.add(it) }
+    }
+
+    private fun subscribeToRotateLeftButton() {
+        iv_rotate_left.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                profilePicture?.let{
+                    sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateLeft(profilePicture!!))
+                }
+
+            }.let { disposables.add(it) }
+    }
+
     private fun subscribeToUpdateProfileButton() {
         btn_update_profile.clicks()
             .observeOn(AndroidSchedulers.mainThread())
@@ -200,14 +237,10 @@ class RegisterUserProfileFragment : DaggerFragment() {
 
     private fun processImageFromGallery(uri: Uri?) {
         if (uri != null) {
-            val tempFilePath = PhotoUtils.getPathFromUri(requireContext(), uri)
+            tempFilePath = PhotoUtils.getPathFromUri(requireContext(), uri)
             if (tempFilePath != null) {
-                civ_profile_photo.setImageBitmap(
-                    PhotoUtils.resampleImage(
-                        tempFilePath,
-                        requireContext()
-                    )
-                )
+                sharedViewModel.userProfilePhoto.onNext(PhotoUtils.fixRotation(
+                    PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!))
             } else {
                 sharedViewModel.userProfilePhotoState.onNext(
                     ProfilePictureError(getString(R.string.unsupported_picture_format))
@@ -243,13 +276,10 @@ class RegisterUserProfileFragment : DaggerFragment() {
         }
     }
 
-    private fun processImage() {
+    private fun processImageFromCamera() {
 
-        profilePicture = PhotoUtils.fixRotation(
-            PhotoUtils.resampleImage(tempFilePath!!, requireContext()),
-            tempFilePath!!
-        )
-        civ_profile_photo.setImageBitmap(profilePicture)
+        sharedViewModel.userProfilePhoto.onNext(PhotoUtils.fixRotation(
+            PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!))
     }
 
     override fun onRequestPermissionsResult(

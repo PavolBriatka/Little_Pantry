@@ -1,5 +1,6 @@
 package com.briatka.pavol.littlepantry.ui.auth.viewmodel
 
+import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -40,6 +41,7 @@ class AuthViewModel @Inject constructor(
     override val userFirstName: BehaviorSubject<String> = BehaviorSubject.create()
     override val userSurname: BehaviorSubject<String> = BehaviorSubject.create()
     override val userNickname: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userProfilePhoto: BehaviorSubject<Bitmap> = BehaviorSubject.create()
     override val userProfilePhotoState: PublishSubject<ProfilePictureState> = PublishSubject.create()
 
     init {

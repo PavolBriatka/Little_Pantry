@@ -74,6 +74,24 @@ object PhotoUtils {
         return Bitmap.createBitmap(bitmap,0,0,bitmap.width, bitmap.height,matrix,true)
     }
 
+    fun rotateRight(bitmap: Bitmap): Bitmap {
+
+        val matrix = Matrix().apply {
+            setRotate(90f)
+        }
+
+        return Bitmap.createBitmap(bitmap,0,0,bitmap.width, bitmap.height,matrix,true)
+    }
+
+    fun rotateLeft(bitmap: Bitmap): Bitmap {
+
+        val matrix = Matrix().apply {
+            setRotate(-90f)
+        }
+
+        return Bitmap.createBitmap(bitmap,0,0,bitmap.width, bitmap.height,matrix,true)
+    }
+
     fun getPathFromUri(context: Context, uri: Uri): String? {
         val cursor = context.contentResolver.query(uri, null, null, null, null)
         var path: String?
