@@ -34,4 +34,5 @@
     <string name="cd_upload_picture_from_gallery">Upload picture from gallery</string>
     <string name="error_processing_profile_picture">Something went wrong. Please try again</string>
     <string name="unsupported_picture_format">Unsupported picture format</string>
+    <string name="cd_app_logo">App Logo</string>
 </resources>
