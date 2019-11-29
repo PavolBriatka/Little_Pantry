@@ -2,6 +2,7 @@ package com.briatka.pavol.littlepantry.di
 
 import com.briatka.pavol.littlepantry.SplashActivity
 import com.briatka.pavol.littlepantry.di.auth.AuthFragmentBuildersModule
+import com.briatka.pavol.littlepantry.di.auth.AuthModule
 import com.briatka.pavol.littlepantry.di.auth.AuthViewModelsModule
 import com.briatka.pavol.littlepantry.di.main.MainFragmentBuildersModule
 import com.briatka.pavol.littlepantry.di.main.MainModule
@@ -19,7 +20,8 @@ abstract class ActivityBuildersModule {
     abstract fun contributeSplashActivity(): SplashActivity
 
     @ContributesAndroidInjector(
-        modules = [AuthViewModelsModule::class,
+        modules = [AuthModule::class,
+            AuthViewModelsModule::class,
             AuthFragmentBuildersModule::class]
     )
     abstract fun contributeAuthActivity(): AuthActivity

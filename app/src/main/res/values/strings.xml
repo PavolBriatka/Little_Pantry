@@ -37,4 +37,8 @@
     <string name="cd_app_logo">App Logo</string>
     <string name="cd_rotate_profile_picture_left">Rotate profile picture left</string>
     <string name="cd_rotate_profile_picture_right">Rotate profile picture right</string>
+    <string name="registration_step_one">Account Info</string>
+    <string name="registration_step_two">Profile picture</string>
+    <string name="registration_step_three">Contact info</string>
+
 </resources>

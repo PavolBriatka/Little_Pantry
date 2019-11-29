@@ -18,12 +18,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_registration_form.*
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
 class RegistrationFormFragment : DaggerFragment() {
 
 
     private val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
+    @Inject
+    lateinit var steps : List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,6 +38,7 @@ class RegistrationFormFragment : DaggerFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        sv_registration_header.setSteps(steps)
         animateViewsIn(view)
     }
 

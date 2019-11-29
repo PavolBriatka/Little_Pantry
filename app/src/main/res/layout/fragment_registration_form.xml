@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:paddingTop="48dp"
     tools:context=".ui.auth.fragments.RegistrationFormFragment">
 
     <com.shuhart.stepview.StepView
@@ -14,6 +13,7 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="48dp"
         android:paddingStart="@dimen/medium_margin"
         android:paddingEnd="@dimen/medium_margin"
         app:sv_stepsNumber="3"
@@ -27,6 +27,7 @@
         app:sv_doneCircleColor="@color/colorAccent"
         app:sv_doneStepLineColor="@color/colorAccent"
         app:sv_doneStepMarkColor="@android:color/white"
+        app:sv_doneTextColor="@color/grey"
         app:sv_doneCircleRadius="12dp"
         app:sv_selectedCircleRadius="12dp"
         app:sv_selectedStepNumberColor="@android:color/white"

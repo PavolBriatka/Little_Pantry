@@ -5,7 +5,6 @@
     android:id="@+id/cl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="48dp"
     tools:context=".ui.auth.fragments.RegisterUserProfileFragment">
 
     <com.shuhart.stepview.StepView
@@ -13,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:paddingTop="48dp"
         android:paddingStart="@dimen/medium_margin"
         android:paddingEnd="@dimen/medium_margin"
         android:paddingBottom="@dimen/extra_large_margin"
@@ -24,6 +24,7 @@
         app:sv_doneCircleRadius="12dp"
         app:sv_doneStepLineColor="@color/colorAccent"
         app:sv_doneStepMarkColor="@android:color/white"
+        app:sv_doneTextColor="@color/grey"
         app:sv_nextStepCircleEnabled="true"
         app:sv_nextStepLineColor="@color/grey"
         app:sv_nextTextColor="@color/grey"
@@ -37,75 +38,82 @@
         app:sv_stepViewStyle="@style/StepView"
         app:sv_stepsNumber="3" />
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/civ_profile_photo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_blank_profile"
-        app:civ_border="true"
-        app:civ_border_color="@color/colorAccent"
-        app:civ_border_width="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sv_registration_header" />
-
-    <ImageView
-        android:id="@+id/iv_rotate_left"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="84dp"
-        android:layout_marginEnd="@dimen/margin_small"
-        android:background="@drawable/ic_icon_background"
-        android:contentDescription="@string/cd_rotate_profile_picture_left"
-        android:padding="6dp"
-        android:src="@drawable/ic_rotate_left"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
-        app:layout_constraintEnd_toStartOf="@id/civ_profile_photo" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <ImageView
-        android:id="@+id/iv_rotate_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/margin_small"
-        android:layout_marginTop="84dp"
-        android:background="@drawable/ic_icon_background"
-        android:contentDescription="@string/cd_rotate_profile_picture_right"
-        android:padding="6dp"
-        android:src="@drawable/ic_rotate_right"
-        app:layout_constraintBottom_toTopOf="@id/guideline"
-        app:layout_constraintStart_toEndOf="@id/civ_profile_photo" />
-
-    <LinearLayout
-        android:id="@+id/upload_options"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_small"
-        android:alpha="1"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        app:layout_constraintEnd_toEndOf="@id/civ_profile_photo"
-        app:layout_constraintTop_toBottomOf="@id/civ_profile_photo">
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/civ_profile_photo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_blank_profile"
+            app:civ_border="true"
+            app:civ_border_color="@color/colorAccent"
+            app:civ_border_width="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/iv_take_picture"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:contentDescription="@string/cd_take_picture"
-            android:src="@drawable/ic_photo_camera" />
+            android:id="@+id/iv_rotate_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="84dp"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:background="@drawable/ic_icon_background"
+            android:contentDescription="@string/cd_rotate_profile_picture_left"
+            android:padding="6dp"
+            android:src="@drawable/ic_rotate_left"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/civ_profile_photo" />
 
         <ImageView
-            android:id="@+id/iv_select_picture"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:layout_weight="1"
-            android:contentDescription="@string/cd_upload_picture_from_gallery"
-            android:src="@drawable/ic_photo_library" />
+            android:id="@+id/iv_rotate_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/margin_small"
+            android:layout_marginTop="84dp"
+            android:background="@drawable/ic_icon_background"
+            android:contentDescription="@string/cd_rotate_profile_picture_right"
+            android:padding="6dp"
+            android:src="@drawable/ic_rotate_right"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/civ_profile_photo" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/upload_options"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:alpha="1"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintEnd_toEndOf="@id/civ_profile_photo"
+            app:layout_constraintTop_toBottomOf="@id/civ_profile_photo">
+
+            <ImageView
+                android:id="@+id/iv_take_picture"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:contentDescription="@string/cd_take_picture"
+                android:src="@drawable/ic_photo_camera" />
+
+            <ImageView
+                android:id="@+id/iv_select_picture"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:contentDescription="@string/cd_upload_picture_from_gallery"
+                android:src="@drawable/ic_photo_library" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
         android:id="@+id/btn_update_profile"
@@ -120,12 +128,5 @@
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="210dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
