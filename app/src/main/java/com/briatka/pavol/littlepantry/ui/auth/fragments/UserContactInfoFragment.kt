@@ -11,7 +11,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
+import com.jakewharton.rxbinding3.widget.textChanges
 import dagger.android.support.DaggerFragment
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_user_contact_info.*
 import javax.inject.Inject
 
@@ -19,6 +22,8 @@ class UserContactInfoFragment : DaggerFragment() {
 
 
     private val sharedViewModel: AuthViewModel by activityViewModels()
+    private val disposables = CompositeDisposable()
+
     @Inject
     lateinit var steps: List<String>
 
@@ -64,6 +69,41 @@ class UserContactInfoFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        updateEmailField()
+        updatePhoneNumber()
+        phoneNumberSubscription()
+    }
+
+    private fun phoneNumberSubscription() {
+        et_phone_number.textChanges()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (et_phone_number.tag == null) {
+                    sharedViewModel.userPhoneNumber.onNext("$it")
+                }
+                et_phone_number.tag = null
+            }.let { disposables.add(it) }
+    }
+
+    private fun updatePhoneNumber() {
+        sharedViewModel.userPhoneNumber
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                if (et_phone_number.text.toString() != it) {
+                    et_phone_number.tag = "SET"
+                    et_phone_number.setText(it)
+                }
+            }.let { disposables.add(it) }
+    }
+
+    private fun updateEmailField() {
+        sharedViewModel.userEmail
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                et_email_address.setText(it)
+                et_email_address.isEnabled = false
+            }.let { disposables.add(it) }
     }
 
     private fun animateViewsIn(view: View) {

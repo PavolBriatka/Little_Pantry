@@ -13,5 +13,6 @@ class AuthConstants {
         const val REQUEST_PICK_IMAGE_FROM_GALLERY = 2
         const val READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 3
         const val PERMISSION_REQUEST_CAMERA = 4
+        const val REQUEST_PHONE_STATE = 5
     }
 }

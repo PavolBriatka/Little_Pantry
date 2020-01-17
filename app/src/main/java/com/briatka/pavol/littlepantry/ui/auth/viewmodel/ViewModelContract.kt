@@ -14,6 +14,7 @@ interface ViewModelContract {
     val userNickname: BehaviorSubject<String>
     val userProfilePhoto: BehaviorSubject<Bitmap>
     val userProfilePhotoState: PublishSubject<ProfilePictureState>
+    val userPhoneNumber: BehaviorSubject<String>
 
     fun startUserVerification(flag: String)
     fun startUserRegistration()
