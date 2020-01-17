@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.briatka.pavol.littlepantry.models.NewUser
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
@@ -33,7 +33,7 @@ class AuthViewModel @Inject constructor(
     }
 
     private val disposables = CompositeDisposable()
-    val authState = MutableLiveData<AuthUserState>()
+    val userState = MutableLiveData<UserState>()
 
     override val userEmail: BehaviorSubject<String> = BehaviorSubject.create()
     override val userPassword: BehaviorSubject<String> = BehaviorSubject.create()
@@ -49,7 +49,7 @@ class AuthViewModel @Inject constructor(
     }
 
     override fun startUserVerification(flag: String) {
-        authState.postValue(AuthInProgress(flag))
+        userState.postValue(AuthInProgress(flag))
         userEmail.hide()
             .firstElement()
             .subscribe {
@@ -68,27 +68,29 @@ class AuthViewModel @Inject constructor(
                         if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
                             startUserLogin()
                         } else {
-                            authState.postValue(AuthUserNotExist)
+                            userState.postValue(AuthUserNotExist)
                         }
                     }
                 }
                 REGISTER_FLAG -> {
                     signInMethods?.let {
                         if (it.contains(EmailAuthProvider.EMAIL_PASSWORD_SIGN_IN_METHOD)) {
-                            authState.postValue(AuthUserAlreadyExist)
+                            userState.postValue(UserAlreadyExist)
                         } else {
-                            authState.postValue(AuthCreateNewUser)
+                            userState.postValue(CreateNewUser)
                         }
                     }
                 }
             }
         }
             .addOnFailureListener {
-                authState.postValue(AuthEmailVerificationFailure(LOGIN_EMAIL_ERROR))
+                userState.postValue(AuthEmailVerificationFailure(LOGIN_EMAIL_ERROR))
             }
     }
 
     override fun startUserRegistration() {
+        userState.postValue(StartUserRegistration) //associate with loading element (progress bar/ fragment)
+
         Observable.combineLatest(userEmail.hide(), userPassword.hide(),
             BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
@@ -105,8 +107,8 @@ class AuthViewModel @Inject constructor(
                 if (task.isSuccessful) {
                     updateDbProfileInfo()
                 } else {
-                    authState.postValue(
-                        AuthRegistrationFailure(
+                    userState.postValue(
+                        RegistrationFailure(
                             task.exception?.message ?: ERROR_UNSPECIFIED
                         )
                     )
@@ -128,13 +130,17 @@ class AuthViewModel @Inject constructor(
             .firstElement()
             .subscribe { newUser ->
                 dbUserReference.set(newUser)
-                    .addOnSuccessListener { authState.postValue(AuthRegistrationSuccessful) }
+                    .addOnSuccessListener { userState.postValue(RegistrationSuccessful) }
                     .addOnFailureListener { Log.w(TAG, it.message) }
             }.let { disposables.add(it) }
     }
 
+    override fun uploadUserProfilePicture() {
+        userState.postValue(UploadUserProfilePicture)
+    }
+
     override fun finishRegistration() {
-        authState.postValue(AuthRegistrationFinalized)
+        userState.postValue(RegistrationFinalized)
     }
 
     override fun startUserLogin() {
@@ -153,13 +159,13 @@ class AuthViewModel @Inject constructor(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "signInWithEmail:success")
-                    authState.postValue(AuthLoginSuccessful)
+                    userState.postValue(AuthLoginSuccessful)
                 } else {
                     Log.e(TAG, "signInWithEmail:failure ${task.exception}")
                     if (task.exception is FirebaseAuthInvalidCredentialsException) {
-                        authState.postValue(AuthWrongPassword)
+                        userState.postValue(AuthWrongPassword)
                     } else {
-                        authState.postValue(
+                        userState.postValue(
                             AuthLoginFailure(task.exception?.message ?: ERROR_UNSPECIFIED)
                         )
                     }

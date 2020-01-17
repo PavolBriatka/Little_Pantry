@@ -10,14 +10,14 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import com.briatka.pavol.littlepantry.ConnectivityLiveData
 import com.briatka.pavol.littlepantry.R
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.viewmodels.ViewModelsProviderFactory
 import com.google.android.material.snackbar.Snackbar
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_auth.*
-import kotlinx.android.synthetic.main.fragment_registration_form.*
+import kotlinx.android.synthetic.main.fragment_user_contact_info.sv_registration_header
 import javax.inject.Inject
 
 class AuthActivity : DaggerAppCompatActivity() {
@@ -61,27 +61,38 @@ class AuthActivity : DaggerAppCompatActivity() {
     }
 
     private fun subscribeAuthenticationStatus() {
-        viewModel.authState.observe(this, Observer<AuthUserState> { userState ->
+        viewModel.userState.observe(this, Observer<UserState> { userState ->
             when (userState) {
-                AuthCreateNewUser -> {
+                CreateNewUser -> {
                     mainNavController.navigate(R.id.action_start_registration)
                 }
-                AuthRegistrationSuccessful -> {
+                RegistrationSuccessful -> {
                     val extras = FragmentNavigatorExtras(
                         sv_registration_header to "header_step_view"
                     )
                     mainNavController.navigate(R.id.action_collect_user_info, null, null, extras)
                 }
-                AuthRegistrationFinalized -> mainNavController.navigate(R.id.action_open_main_activity)
+                ProfilePictureUploadSuccessful -> {
+                    val extras = FragmentNavigatorExtras(
+                        sv_registration_header to "header_step_view"
+                    )
+                    mainNavController.navigate(
+                        R.id.action_register_user_contact_info,
+                        null,
+                        null,
+                        extras
+                    )
+                }
+                RegistrationFinalized -> mainNavController.navigate(R.id.action_open_main_activity)
                 AuthLoginSuccessful -> mainNavController.navigate(R.id.action_open_main_activity)
-                is AuthRegistrationFailure -> Toast.makeText(
+                is RegistrationFailure -> Toast.makeText(
                     this,
                     userState.error,
                     Toast.LENGTH_LONG
                 ).show()
                 is AuthEmailVerificationFailure,
                 AuthUserNotExist,
-                AuthUserAlreadyExist,
+                UserAlreadyExist,
                 is AuthLoginFailure,
                 AuthWrongPassword -> {
                 }

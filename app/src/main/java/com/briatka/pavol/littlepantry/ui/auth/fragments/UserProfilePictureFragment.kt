@@ -23,6 +23,7 @@ import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.ProfilePictureError
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PERMISSION_REQUEST_CAMERA
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_IMAGE_CAPTURE
@@ -32,7 +33,7 @@ import com.jakewharton.rxbinding3.view.clicks
 import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.fragment_register_user_profile.*
+import kotlinx.android.synthetic.main.fragment_user_profile_picture.*
 import java.io.File
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -62,7 +63,7 @@ class UserProfilePictureFragment : DaggerFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_register_user_profile, container, false)
+        return inflater.inflate(R.layout.fragment_user_profile_picture, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -230,7 +231,8 @@ class UserProfilePictureFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .throttleFirst(1000, TimeUnit.MILLISECONDS)
             .subscribe {
-                //TODO: redirect to overview screen
+                //TODO: call sharedViewModel.uploadProfilePicture when flow is finished
+                sharedViewModel.userState.postValue(UserState.ProfilePictureUploadSuccessful)
             }.let { disposables.add(it) }
     }
 

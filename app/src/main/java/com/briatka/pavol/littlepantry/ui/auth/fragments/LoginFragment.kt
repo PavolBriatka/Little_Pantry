@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.briatka.pavol.littlepantry.R
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState.*
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
@@ -47,13 +47,13 @@ class LoginFragment : DaggerFragment() {
     }
 
     private fun subscribeObserver() {
-        sharedViewModel.authState.removeObservers(viewLifecycleOwner)
-        sharedViewModel.authState.observe(viewLifecycleOwner, Observer { userState ->
+        sharedViewModel.userState.removeObservers(viewLifecycleOwner)
+        sharedViewModel.userState.observe(viewLifecycleOwner, Observer { userState ->
             when (userState) {
                 is AuthInProgress -> {
                     changeLoadingBarVisibility(userState.flag)
                 }
-                AuthCreateNewUser -> {
+                CreateNewUser -> {
                     changeLoadingBarVisibility()
                 }
                 is AuthEmailVerificationFailure -> {
@@ -64,7 +64,7 @@ class LoginFragment : DaggerFragment() {
                     changeLoadingBarVisibility()
                     onCredentialsError(LOGIN_USER_NOT_EXIST)
                 }
-                AuthUserAlreadyExist -> {
+                UserAlreadyExist -> {
                     changeLoadingBarVisibility()
                     onCredentialsError(REGISTER_USER_ALREADY_EXIST)
                 }

@@ -21,4 +21,6 @@ interface ViewModelContract {
 
     fun startUserLogin()
 
+    fun uploadUserProfilePicture()
+
 }

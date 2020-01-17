@@ -43,7 +43,17 @@
             android:id="@+id/registerUserProfileFragment"
             android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.UserProfilePictureFragment"
             android:label="@string/register_user_profile_fragment_label"
-            tools:layout="@layout/fragment_register_user_profile" />
+            tools:layout="@layout/fragment_user_profile_picture">
+            <action
+                android:id="@+id/action_register_user_contact_info"
+                app:destination="@id/registerUserContactInfoFragment"/>
+        </fragment>
+
+        <fragment
+            android:id="@+id/registerUserContactInfoFragment"
+            android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.UserContactInfoFragment"
+            android:label="@string/register_user_contact_info_fragment_label"
+            tools:layout="@layout/fragment_user_contact_info"/>
 
 
     </navigation>

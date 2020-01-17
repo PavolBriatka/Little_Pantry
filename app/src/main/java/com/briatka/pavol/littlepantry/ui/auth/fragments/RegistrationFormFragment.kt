@@ -9,7 +9,7 @@ import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import com.briatka.pavol.littlepantry.R
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthUserState
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
@@ -118,7 +118,8 @@ class RegistrationFormFragment : DaggerFragment() {
         btn_create_new_user.clicks()
             .throttleFirst(500, TimeUnit.MILLISECONDS)
             .subscribe {
-                sharedViewModel.authState.postValue(AuthUserState.AuthRegistrationSuccessful)
+                //TODO: exchange for sharedViewModel.startuserRegistration when the flow is complete
+                sharedViewModel.userState.postValue(UserState.RegistrationSuccessful)
             }.let { disposables.add(it) }
     }
 

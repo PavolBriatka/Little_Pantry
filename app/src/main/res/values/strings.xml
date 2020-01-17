@@ -28,7 +28,7 @@
     <string name="sign_up_label">Sign up</string>
     <string name="login_header_fragment_label">Login Header Fragment</string>
     <string name="registration_header_fragment_label">Registration Header Fragment</string>
-    <string name="update_profile_button">Update profile</string>
+    <string name="update_profile_button">Update profile picture</string>
     <string name="upload_profile_photo_label">Upload profile photo</string>
     <string name="cd_take_picture">Take picture</string>
     <string name="cd_upload_picture_from_gallery">Upload picture from gallery</string>
@@ -40,5 +40,12 @@
     <string name="registration_step_one">Account Info</string>
     <string name="registration_step_two">Profile picture</string>
     <string name="registration_step_three">Contact info</string>
+    <string name="register_user_contact_info_fragment_label">Contact Information</string>
+    <string name="hint_phone_number">Phone number</string>
+    <string name="hint_address_line">Address line</string>
+    <string name="hint_city">City</string>
+    <string name="hint_zip_code">ZIP code</string>
+    <string name="hint_country">Country</string>
+    <string name="btn_update_contact_info_label">Update contact info</string>
 
 </resources>
