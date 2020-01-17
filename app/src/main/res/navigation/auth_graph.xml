@@ -41,7 +41,7 @@
 
         <fragment
             android:id="@+id/registerUserProfileFragment"
-            android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.RegisterUserProfileFragment"
+            android:name="com.briatka.pavol.littlepantry.ui.auth.fragments.UserProfilePictureFragment"
             android:label="@string/register_user_profile_fragment_label"
             tools:layout="@layout/fragment_register_user_profile" />
 

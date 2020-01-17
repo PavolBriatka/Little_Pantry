@@ -1,7 +1,7 @@
 package com.briatka.pavol.littlepantry.di.auth
 
 import com.briatka.pavol.littlepantry.ui.auth.fragments.LoginFragment
-import com.briatka.pavol.littlepantry.ui.auth.fragments.RegisterUserProfileFragment
+import com.briatka.pavol.littlepantry.ui.auth.fragments.UserProfilePictureFragment
 import com.briatka.pavol.littlepantry.ui.auth.fragments.RegistrationFormFragment
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
@@ -13,7 +13,7 @@ abstract class AuthFragmentBuildersModule {
     abstract fun contributeLoginFragment(): LoginFragment
 
     @ContributesAndroidInjector
-    abstract fun contributeRegisterUserProfileFragment(): RegisterUserProfileFragment
+    abstract fun contributeRegisterUserProfileFragment(): UserProfilePictureFragment
 
     @ContributesAndroidInjector
     abstract fun contributeRegistrationFormFragment(): RegistrationFormFragment

@@ -39,7 +39,7 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
-class RegisterUserProfileFragment : DaggerFragment() {
+class UserProfilePictureFragment : DaggerFragment() {
 
     companion object {
         private const val FILE_PROVIDER_AUTHORITY = "com.briatka.pavol.fileprovider"
