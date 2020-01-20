@@ -74,6 +74,16 @@ class UserContactInfoFragment : DaggerFragment() {
         phoneNumberSubscription()
     }
 
+    override fun onStop() {
+        disposables.clear()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        disposables.dispose()
+        super.onDestroy()
+    }
+
     private fun phoneNumberSubscription() {
         et_phone_number.textChanges()
             .observeOn(AndroidSchedulers.mainThread())
