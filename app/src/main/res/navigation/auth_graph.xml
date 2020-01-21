@@ -35,7 +35,7 @@
             android:label="@string/reg_form_fragment_label"
             tools:layout="@layout/fragment_registration_form">
         <action
-            android:id="@+id/action_collect_user_info"
+            android:id="@+id/action_update_user_profile_picture"
             app:destination="@id/registerUserProfileFragment"/>
         </fragment>
 

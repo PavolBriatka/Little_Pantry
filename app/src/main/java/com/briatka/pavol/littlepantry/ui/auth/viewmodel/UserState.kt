@@ -17,8 +17,8 @@ sealed class UserState {
     object StartUserRegistration: UserState()
     object RegistrationSuccessful: UserState()
     class RegistrationFailure(val error: String): UserState()
-    object UpdateUserProfilePicture: UserState()
-    object UploadUserProfilePicture: UserState()
+    object UpdateUserProfilePicture: UserState() // waiting for user to prepare his photo
+    object UploadUserProfilePicture: UserState() // when user submits photo for upload
     object ProfilePictureUploadSuccessful: UserState()
     class ProfilePictureUploadFailure(val error: String): UserState()
     object RegistrationFinalized: UserState()

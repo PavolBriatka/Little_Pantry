@@ -23,7 +23,6 @@ import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.ProfilePictureError
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PERMISSION_REQUEST_CAMERA
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_IMAGE_CAPTURE
@@ -51,7 +50,7 @@ class UserProfilePictureFragment : DaggerFragment() {
     private var tempFilePath: String? = null
     private var profilePicture: Bitmap? = null
     @Inject
-    lateinit var steps : List<String>
+    lateinit var steps: List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -208,7 +207,7 @@ class UserProfilePictureFragment : DaggerFragment() {
         iv_rotate_right.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                profilePicture?.let{
+                profilePicture?.let {
                     sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
                 }
 
@@ -219,7 +218,7 @@ class UserProfilePictureFragment : DaggerFragment() {
         iv_rotate_left.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                profilePicture?.let{
+                profilePicture?.let {
                     sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateLeft(profilePicture!!))
                 }
 
@@ -231,8 +230,7 @@ class UserProfilePictureFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .throttleFirst(1000, TimeUnit.MILLISECONDS)
             .subscribe {
-                //TODO: call sharedViewModel.uploadProfilePicture when flow is finished
-                sharedViewModel.userState.postValue(UserState.ProfilePictureUploadSuccessful)
+                sharedViewModel.uploadUserProfilePicture()
             }.let { disposables.add(it) }
     }
 
@@ -247,8 +245,11 @@ class UserProfilePictureFragment : DaggerFragment() {
         if (uri != null) {
             tempFilePath = PhotoUtils.getPathFromUri(requireContext(), uri)
             if (tempFilePath != null) {
-                sharedViewModel.userProfilePhoto.onNext(PhotoUtils.fixRotation(
-                    PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!))
+                sharedViewModel.userProfilePhoto.onNext(
+                    PhotoUtils.fixRotation(
+                        PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!
+                    )
+                )
             } else {
                 sharedViewModel.userProfilePhotoState.onNext(
                     ProfilePictureError(getString(R.string.unsupported_picture_format))
@@ -286,8 +287,11 @@ class UserProfilePictureFragment : DaggerFragment() {
 
     private fun processImageFromCamera() {
 
-        sharedViewModel.userProfilePhoto.onNext(PhotoUtils.fixRotation(
-            PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!))
+        sharedViewModel.userProfilePhoto.onNext(
+            PhotoUtils.fixRotation(
+                PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!
+            )
+        )
     }
 
     private fun animateViewsIn(view: View) {

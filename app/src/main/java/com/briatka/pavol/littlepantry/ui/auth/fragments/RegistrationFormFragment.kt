@@ -118,8 +118,7 @@ class RegistrationFormFragment : DaggerFragment() {
         btn_create_new_user.clicks()
             .throttleFirst(500, TimeUnit.MILLISECONDS)
             .subscribe {
-                //TODO: exchange for sharedViewModel.startuserRegistration when the flow is complete
-                sharedViewModel.userState.postValue(UserState.RegistrationSuccessful)
+                sharedViewModel.startUserRegistration()
             }.let { disposables.add(it) }
     }
 

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fl_auth_activity"
@@ -8,20 +7,24 @@
     android:layout_height="match_parent"
     tools:context=".ui.auth.AuthActivity">
 
-
-    <LinearLayout
+    <fragment
+        android:id="@+id/auth_nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/auth_graph" />
 
-        <fragment
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="3"
-            android:id="@+id/auth_nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/auth_graph" />
-    </LinearLayout>
+    <com.github.ybq.android.spinkit.SpinKitView
+        android:id="@+id/generic_loading_spinner"
+        style="@style/SpinKitView.Large.Circle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="#bfffffff"
+        android:visibility="gone"
+        android:paddingStart="@dimen/extra_large_margin"
+        android:paddingEnd="@dimen/extra_large_margin"
+        app:SpinKit_Color="@color/colorAccent" />
 
 </FrameLayout>

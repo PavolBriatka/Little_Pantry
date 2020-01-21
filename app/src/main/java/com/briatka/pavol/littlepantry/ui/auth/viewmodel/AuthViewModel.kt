@@ -1,6 +1,7 @@
 package com.briatka.pavol.littlepantry.ui.auth.viewmodel
 
 import android.graphics.Bitmap
+import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -46,7 +47,7 @@ class AuthViewModel @Inject constructor(
     override val userPhoneNumber: BehaviorSubject<String> = BehaviorSubject.createDefault("")
 
     init {
-        Log.d(TAG, "view model init...")
+        Log.d(TAG, "auth view model initialized")
     }
 
     override fun startUserVerification(flag: String) {
@@ -91,15 +92,18 @@ class AuthViewModel @Inject constructor(
 
     override fun startUserRegistration() {
         userState.postValue(StartUserRegistration) //associate with loading element (progress bar/ fragment)
+        Handler().postDelayed({
+            userState.postValue(RegistrationSuccessful)
+        }, 3000)
 
-        Observable.combineLatest(userEmail.hide(), userPassword.hide(),
+       /* Observable.combineLatest(userEmail.hide(), userPassword.hide(),
             BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
             })
             .firstElement()
             .subscribe { userCredentials ->
                 registerNewUser(userCredentials.first, userCredentials.second)
-            }.let { disposables.add(it) }
+            }.let { disposables.add(it) }*/
     }
 
     private fun registerNewUser(email: String, password: String) {
@@ -138,6 +142,9 @@ class AuthViewModel @Inject constructor(
 
     override fun uploadUserProfilePicture() {
         userState.postValue(UploadUserProfilePicture)
+        Handler().postDelayed({
+            userState.postValue(ProfilePictureUploadSuccessful)
+        }, 3000)
     }
 
     override fun finishRegistration() {

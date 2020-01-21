@@ -1,5 +1,6 @@
 package com.briatka.pavol.littlepantry.ui.auth
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,8 @@ import android.os.Build
 import android.os.Bundle
 import android.telephony.TelephonyManager
 import android.util.Log
+import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
@@ -78,11 +81,15 @@ class AuthActivity : DaggerAppCompatActivity() {
                 CreateNewUser -> {
                     mainNavController.navigate(R.id.action_start_registration)
                 }
+                StartUserRegistration,
+                UploadUserProfilePicture -> generic_loading_spinner.visibility = View.VISIBLE
                 RegistrationSuccessful -> {
-                    val extras = FragmentNavigatorExtras(
-                        sv_registration_header to "header_step_view"
-                    )
-                    mainNavController.navigate(R.id.action_collect_user_info, null, null, extras)
+                    //Prepare extras for shared element
+                    val extras = FragmentNavigatorExtras(sv_registration_header to "header_step_view")
+                    //Trigger navigation to next fragment
+                    mainNavController.navigate(R.id.action_update_user_profile_picture, null, null, extras)
+                    //Launch animation to "slide out" the loading screen as the fragment slides in
+                    loadingScreenSwitch()
                 }
                 ProfilePictureUploadSuccessful -> {
                     /**
@@ -91,16 +98,12 @@ class AuthActivity : DaggerAppCompatActivity() {
                      * the device (allowed from API >= 26) or at least country code of SIM card. To access
                      * either of the information we need user's permission to READ PHONE STATE*/
                     checkPermissions()
-
-                    val extras = FragmentNavigatorExtras(
-                        sv_registration_header to "header_step_view"
-                    )
-                    mainNavController.navigate(
-                        R.id.action_register_user_contact_info,
-                        null,
-                        null,
-                        extras
-                    )
+                    //Prepare extras for shared element
+                    val extras = FragmentNavigatorExtras(sv_registration_header to "header_step_view")
+                    //Trigger navigation to next fragment
+                    mainNavController.navigate(R.id.action_register_user_contact_info, null, null, extras)
+                    //Launch animation to "slide out" the loading screen as the fragment slides in
+                    loadingScreenSwitch()
                 }
                 RegistrationFinalized -> mainNavController.navigate(R.id.action_open_main_activity)
                 AuthLoginSuccessful -> mainNavController.navigate(R.id.action_open_main_activity)
@@ -118,6 +121,20 @@ class AuthActivity : DaggerAppCompatActivity() {
 
             }
         })
+    }
+
+    private fun loadingScreenSwitch() {
+        val offset = -(resources.getDimensionPixelSize(R.dimen.offset_y).toFloat())
+        val interpolator =
+            AnimationUtils.loadInterpolator(this, android.R.interpolator.linear)
+
+        generic_loading_spinner.animate()
+            .setListener(getAnimatorListener())
+            .translationX(offset)
+            .alpha(0f)
+            .setInterpolator(interpolator)
+            .setDuration(600L)
+            .start()
     }
 
     private fun checkPermissions() {
@@ -171,6 +188,19 @@ class AuthActivity : DaggerAppCompatActivity() {
     ) {
         if (requestCode == REQUEST_PHONE_STATE) {
             if (Build.VERSION.SDK_INT >= 26) setPhoneNumber() else setPhoneCode()
+        }
+    }
+
+    private fun getAnimatorListener(): Animator.AnimatorListener {
+        return object: Animator.AnimatorListener {
+            override fun onAnimationRepeat(animation: Animator?) {}
+            override fun onAnimationEnd(animation: Animator?) {
+                generic_loading_spinner.visibility = View.GONE
+                generic_loading_spinner.translationX = 0f
+                generic_loading_spinner.alpha = 1f
+            }
+            override fun onAnimationCancel(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {}
         }
     }
 
