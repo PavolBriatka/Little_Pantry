@@ -6,10 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.fragment.app.activityViewModels
 import com.briatka.pavol.littlepantry.R
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
@@ -26,7 +25,7 @@ class RegistrationFormFragment : DaggerFragment() {
     private val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
     @Inject
-    lateinit var steps : List<String>
+    lateinit var steps: List<String>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -123,7 +122,7 @@ class RegistrationFormFragment : DaggerFragment() {
     }
 
     private fun animateViewsIn(view: View) {
-        val root = view.findViewById<ConstraintLayout>(R.id.cl_root)
+        val root = view.findViewById<CoordinatorLayout>(R.id.cl_root)
         val count = root.childCount
         var offset = resources.getDimensionPixelSize(R.dimen.offset_y).toFloat()
         val interpolator =
