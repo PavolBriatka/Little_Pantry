@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_root"
@@ -9,55 +8,50 @@
     android:background="@android:color/white"
     tools:context=".ui.auth.fragments.RegistrationFormFragment">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/abl_header"
+    <com.shuhart.stepview.StepView
+        android:id="@+id/sv_registration_header"
         android:layout_width="match_parent"
         android:layout_height="140dp"
-        android:fitsSystemWindows="true"
-        app:elevation="1dp"
-        android:background="@android:color/transparent">
-
-        <com.shuhart.stepview.StepView
-            android:id="@+id/sv_registration_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:paddingStart="@dimen/medium_margin"
-            android:paddingTop="64dp"
-            android:paddingEnd="@dimen/medium_margin"
-            android:paddingBottom="@dimen/extra_large_margin"
-            android:transitionName="header_step_view"
-            app:layout_constraintTop_toTopOf="parent"
-            app:sv_animationDuration="300"
-            app:sv_animationType="All"
-            app:sv_doneCircleColor="@color/colorAccent"
-            app:sv_doneCircleRadius="12dp"
-            app:sv_doneStepLineColor="@color/colorAccent"
-            app:sv_doneStepMarkColor="@android:color/white"
-            app:sv_doneTextColor="@color/grey"
-            app:sv_nextStepCircleEnabled="true"
-            app:sv_nextStepLineColor="@color/grey"
-            app:sv_nextTextColor="@color/grey"
-            app:sv_selectedCircleColor="@color/colorAccent"
-            app:sv_selectedCircleRadius="12dp"
-            app:sv_selectedStepNumberColor="@android:color/white"
-            app:sv_selectedTextColor="@color/colorAccent"
-            app:sv_stepLineWidth="2dp"
-            app:sv_stepNumberTextSize="12sp"
-            app:sv_stepPadding="4dp"
-            app:sv_stepViewStyle="@style/StepView"
-            app:sv_stepsNumber="3" />
-
-    </com.google.android.material.appbar.AppBarLayout>
+        android:layout_gravity="top"
+        android:background="@android:color/white"
+        android:paddingStart="@dimen/medium_margin"
+        android:paddingTop="48dp"
+        android:paddingEnd="@dimen/medium_margin"
+        android:paddingBottom="48dp"
+        android:transitionName="header_step_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:sv_animationDuration="300"
+        app:sv_animationType="All"
+        app:sv_doneCircleColor="@color/colorAccent"
+        app:sv_doneCircleRadius="12dp"
+        app:sv_doneStepLineColor="@color/colorAccent"
+        app:sv_doneStepMarkColor="@android:color/white"
+        app:sv_doneTextColor="@color/grey"
+        app:sv_nextStepCircleEnabled="true"
+        app:sv_nextStepLineColor="@color/grey"
+        app:sv_nextTextColor="@color/grey"
+        app:sv_selectedCircleColor="@color/colorAccent"
+        app:sv_selectedCircleRadius="12dp"
+        app:sv_selectedStepNumberColor="@android:color/white"
+        app:sv_selectedTextColor="@color/colorAccent"
+        app:sv_stepLineWidth="2dp"
+        app:sv_stepNumberTextSize="12sp"
+        app:sv_stepPadding="4dp"
+        app:sv_stepViewStyle="@style/StepView"
+        app:sv_stepsNumber="3"
+        android:elevation="4dp"/>
 
     <ScrollView
         android:id="@+id/sv_registration_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="140dp"
+        android:overScrollMode="never"
         android:layout_marginBottom="@dimen/extra_large_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_registration_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -172,10 +166,10 @@
         android:id="@+id/btn_create_new_user"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
         android:layout_margin="@dimen/medium_margin"
         android:background="@drawable/btn_background"
         android:gravity="center"
-        android:layout_gravity="bottom"
         android:padding="@dimen/margin_small"
         android:text="@string/button_create_account"
         android:textColor="@color/colorAccent"

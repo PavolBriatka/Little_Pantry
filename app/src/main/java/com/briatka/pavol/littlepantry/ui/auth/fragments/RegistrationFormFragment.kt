@@ -1,12 +1,14 @@
 package com.briatka.pavol.littlepantry.ui.auth.fragments
 
 
+import android.animation.ValueAnimator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
@@ -16,6 +18,7 @@ import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_registration_form.*
+import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -39,6 +42,52 @@ class RegistrationFormFragment : DaggerFragment() {
         super.onViewCreated(view, savedInstanceState)
         sv_registration_header.setSteps(steps)
         animateViewsIn(view)
+
+        KeyboardVisibilityEvent.setEventListener(
+            requireActivity()
+        ) { isVisible ->
+            if (isVisible) {
+                animateHeader(true)
+            } else {
+                animateHeader(false)
+            }
+        }
+    }
+
+    private fun animateHeader(scrollUp: Boolean) {
+        if (scrollUp) {
+            val anim = ValueAnimator.ofInt(sv_registration_header.measuredHeight, (sv_registration_header.measuredHeight*0.7).toInt())
+            anim.addUpdateListener {
+                val value = it.animatedValue as Int
+                    Log.e("VALUE", "$value")
+                    val params = sv_registration_header.layoutParams
+                    params.height = value
+                    sv_registration_header.layoutParams = params
+
+            }
+
+            anim.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear)
+            anim.duration = 600L
+            anim.start()
+            /* val params = sv_registration_header.layoutParams
+             Log.e("HEIGHT", "${params.height}")
+             params.height = (params.height * 0.75).toInt()
+             sv_registration_header.layoutParams = params*/
+        } else {
+            val anim = ValueAnimator.ofInt(sv_registration_header.measuredHeight, (sv_registration_header.measuredHeight*1.43).toInt())
+            anim.addUpdateListener {
+                val value = it.animatedValue as Int
+                Log.e("VALUE", "$value")
+                val params = sv_registration_header.layoutParams
+                params.height = value
+                sv_registration_header.layoutParams = params
+
+            }
+
+            anim.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear)
+            anim.duration = 300L
+            anim.start()
+        }
     }
 
     override fun onStart() {
@@ -122,13 +171,13 @@ class RegistrationFormFragment : DaggerFragment() {
     }
 
     private fun animateViewsIn(view: View) {
-        val root = view.findViewById<CoordinatorLayout>(R.id.cl_root)
+        val root = view.findViewById<ConstraintLayout>(R.id.cl_registration_form)
         val count = root.childCount
         var offset = resources.getDimensionPixelSize(R.dimen.offset_y).toFloat()
         val interpolator =
             AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in)
 
-        for (i in 1 until count) {
+        for (i in 0 until count) {
             val mView = root.getChildAt(i)
             mView.translationX = offset
             mView.alpha = 0.5f

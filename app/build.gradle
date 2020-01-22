@@ -36,7 +36,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
 
     //Material lib
     def material_version = "1.0.0"
@@ -51,7 +51,7 @@ dependencies {
     implementation "android.arch.lifecycle:reactivestreams:$reactivestreams_version"
 
     // ViewModel and LiveData
-    def lifecycle_version = '2.2.0-rc02'
+    def lifecycle_version = '2.2.0-rc03'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
 
@@ -67,17 +67,17 @@ dependencies {
     kapt 'com.google.dagger:dagger-android-processor:2.22.1'
 
     //Firebase libs
-    implementation 'com.google.firebase:firebase-analytics:17.2.1'
+    implementation 'com.google.firebase:firebase-analytics:17.2.2'
     implementation 'com.google.firebase:firebase-database:19.2.0'
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
     implementation 'com.google.firebase:firebase-storage:19.1.0'
-    implementation 'com.google.firebase:firebase-firestore-ktx:21.2.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.3.1'
 
     // Navigation
     def nav_version = "2.1.0"
     implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
-    implementation 'androidx.fragment:fragment-ktx:1.2.0-rc02'
+    implementation 'androidx.fragment:fragment-ktx:1.2.0-rc05'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.9.0'
@@ -93,6 +93,8 @@ dependencies {
     implementation "androidx.exifinterface:exifinterface:1.1.0"
     //Picasso image loader
     implementation 'com.squareup.picasso:picasso:2.71828'
+    //Lib to attach soft keyboard listener
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
