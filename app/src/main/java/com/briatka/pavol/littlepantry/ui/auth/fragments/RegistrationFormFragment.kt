@@ -1,17 +1,21 @@
 package com.briatka.pavol.littlepantry.ui.auth.fragments
 
 
+import android.animation.Animator
 import android.animation.ValueAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewPropertyAnimator
 import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.HEADER_SCROLL_DOWN_COEFFICIENT
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.HEADER_SCROLL_UP_COEFFICIENT
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import dagger.android.support.DaggerFragment
@@ -56,37 +60,22 @@ class RegistrationFormFragment : DaggerFragment() {
 
     private fun animateHeader(scrollUp: Boolean) {
         if (scrollUp) {
-            val anim = ValueAnimator.ofInt(sv_registration_header.measuredHeight, (sv_registration_header.measuredHeight*0.7).toInt())
-            anim.addUpdateListener {
-                val value = it.animatedValue as Int
-                    Log.e("VALUE", "$value")
-                    val params = sv_registration_header.layoutParams
-                    params.height = value
-                    sv_registration_header.layoutParams = params
+            val offset =
+                ((sv_registration_header.measuredHeight * HEADER_SCROLL_UP_COEFFICIENT).toInt() - sv_registration_header.measuredHeight).toFloat()
+            Log.e("OFFSET", "$offset")
+            val headerAnim = provideHeaderAnimation(HEADER_SCROLL_UP_COEFFICIENT)
+            val formAnimation = provideFormAnimation(offset)
+            headerAnim.addListener(animatorListener(formAnimation))
+            headerAnim.start()
 
-            }
-
-            anim.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear)
-            anim.duration = 600L
-            anim.start()
-            /* val params = sv_registration_header.layoutParams
-             Log.e("HEIGHT", "${params.height}")
-             params.height = (params.height * 0.75).toInt()
-             sv_registration_header.layoutParams = params*/
         } else {
-            val anim = ValueAnimator.ofInt(sv_registration_header.measuredHeight, (sv_registration_header.measuredHeight*1.43).toInt())
-            anim.addUpdateListener {
-                val value = it.animatedValue as Int
-                Log.e("VALUE", "$value")
-                val params = sv_registration_header.layoutParams
-                params.height = value
-                sv_registration_header.layoutParams = params
-
-            }
-
-            anim.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear)
-            anim.duration = 300L
-            anim.start()
+            val offset =
+                ((sv_registration_header.measuredHeight * HEADER_SCROLL_DOWN_COEFFICIENT).toInt() - sv_registration_header.measuredHeight).toFloat()
+            Log.e("OFFSET", "$offset")
+            val headerAnim = provideHeaderAnimation(HEADER_SCROLL_DOWN_COEFFICIENT)
+            val formAnimation = provideFormAnimation(offset)
+            headerAnim.addListener(animatorListener(formAnimation))
+            headerAnim.start()
         }
     }
 
@@ -170,6 +159,7 @@ class RegistrationFormFragment : DaggerFragment() {
             }.let { disposables.add(it) }
     }
 
+    //region Animation functions
     private fun animateViewsIn(view: View) {
         val root = view.findViewById<ConstraintLayout>(R.id.cl_registration_form)
         val count = root.childCount
@@ -190,4 +180,49 @@ class RegistrationFormFragment : DaggerFragment() {
             offset *= 1.5f
         }
     }
+
+    private fun provideHeaderAnimation(heightCoefficient: Float): ValueAnimator {
+        val anim = ValueAnimator.ofInt(
+            sv_registration_header.measuredHeight,
+            (sv_registration_header.measuredHeight * heightCoefficient).toInt()
+        )
+        anim.addUpdateListener {
+            val value = it.animatedValue as Int
+            val params = sv_registration_header.layoutParams
+            params.height = value
+            sv_registration_header.layoutParams = params
+
+        }
+        anim.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear)
+        anim.duration = 200L
+        return anim
+    }
+
+    private fun provideFormAnimation(offset: Float): ViewPropertyAnimator {
+        return sv_registration_form.animate()
+            .translationY(offset)
+            .setInterpolator(
+                AnimationUtils.loadInterpolator(
+                    context,
+                    android.R.interpolator.linear
+                )
+            )
+            .setDuration(200L)
+    }
+
+    /**Animator listener for header to start scroll view animation in sync with header animation*/
+    private fun animatorListener(awaitAnimation: ViewPropertyAnimator): Animator.AnimatorListener {
+        return object : Animator.AnimatorListener {
+            override fun onAnimationRepeat(animation: Animator?) {}
+
+            override fun onAnimationEnd(animation: Animator?) {}
+
+            override fun onAnimationCancel(animation: Animator?) {}
+
+            override fun onAnimationStart(animation: Animator?) {
+                awaitAnimation.start()
+            }
+        }
+    }
+    //endregion
 }

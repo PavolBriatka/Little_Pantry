@@ -14,5 +14,7 @@ class AuthConstants {
         const val READ_EXTERNAL_STORAGE_PERMISSION_REQUEST = 3
         const val PERMISSION_REQUEST_CAMERA = 4
         const val REQUEST_PHONE_STATE = 5
+        const val HEADER_SCROLL_UP_COEFFICIENT = 0.7f
+        const val HEADER_SCROLL_DOWN_COEFFICIENT = 1.43f
     }
 }

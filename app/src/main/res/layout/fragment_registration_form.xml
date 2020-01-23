@@ -5,7 +5,7 @@
     android:id="@+id/cl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@android:color/black"
     tools:context=".ui.auth.fragments.RegistrationFormFragment">
 
     <com.shuhart.stepview.StepView
@@ -47,6 +47,7 @@
         android:layout_height="match_parent"
         android:layout_marginTop="140dp"
         android:overScrollMode="never"
+        android:background="@android:color/white"
         android:layout_marginBottom="@dimen/extra_large_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
