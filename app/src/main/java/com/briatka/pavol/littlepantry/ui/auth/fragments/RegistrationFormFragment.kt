@@ -63,8 +63,8 @@ class RegistrationFormFragment : DaggerFragment() {
             val offset =
                 ((sv_registration_header.measuredHeight * HEADER_SCROLL_UP_COEFFICIENT).toInt() - sv_registration_header.measuredHeight).toFloat()
             Log.e("OFFSET", "$offset")
-            val headerAnim = provideHeaderAnimation(HEADER_SCROLL_UP_COEFFICIENT)
-            val formAnimation = provideFormAnimation(offset)
+            val headerAnim = provideHeaderScrollAnimation(HEADER_SCROLL_UP_COEFFICIENT)
+            val formAnimation = provideFormTranslationAnimation(offset)
             headerAnim.addListener(animatorListener(formAnimation))
             headerAnim.start()
 
@@ -72,8 +72,8 @@ class RegistrationFormFragment : DaggerFragment() {
             val offset =
                 ((sv_registration_header.measuredHeight * HEADER_SCROLL_DOWN_COEFFICIENT).toInt() - sv_registration_header.measuredHeight).toFloat()
             Log.e("OFFSET", "$offset")
-            val headerAnim = provideHeaderAnimation(HEADER_SCROLL_DOWN_COEFFICIENT)
-            val formAnimation = provideFormAnimation(offset)
+            val headerAnim = provideHeaderScrollAnimation(HEADER_SCROLL_DOWN_COEFFICIENT)
+            val formAnimation = provideFormTranslationAnimation(offset)
             headerAnim.addListener(animatorListener(formAnimation))
             headerAnim.start()
         }
@@ -181,11 +181,10 @@ class RegistrationFormFragment : DaggerFragment() {
         }
     }
 
-    private fun provideHeaderAnimation(heightCoefficient: Float): ValueAnimator {
+    private fun provideHeaderScrollAnimation(heightCoefficient: Float): ValueAnimator {
         val anim = ValueAnimator.ofInt(
             sv_registration_header.measuredHeight,
-            (sv_registration_header.measuredHeight * heightCoefficient).toInt()
-        )
+            (sv_registration_header.measuredHeight * heightCoefficient).toInt())
         anim.addUpdateListener {
             val value = it.animatedValue as Int
             val params = sv_registration_header.layoutParams
@@ -198,7 +197,21 @@ class RegistrationFormFragment : DaggerFragment() {
         return anim
     }
 
-    private fun provideFormAnimation(offset: Float): ViewPropertyAnimator {
+    private fun provideFormScrollAnimation(heightCoefficient: Float): ValueAnimator {
+        val anim = ValueAnimator.ofInt(sv_registration_form.measuredHeight,
+            (sv_registration_form.measuredHeight * heightCoefficient).toInt())
+        anim.addUpdateListener {
+            val value = it.animatedValue as Int
+            val params = sv_registration_form.layoutParams
+            params.height = value
+            sv_registration_form.layoutParams = params
+        }
+        anim.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear)
+        anim.duration = 200L
+        return anim
+    }
+
+    private fun provideFormTranslationAnimation(offset: Float): ViewPropertyAnimator {
         return sv_registration_form.animate()
             .translationY(offset)
             .setInterpolator(
