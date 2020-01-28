@@ -76,6 +76,9 @@ class RegistrationFormFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        updateFirstNameField()
+        updateSurnameField()
+        updateUserNameField()
         updateEmailField()
         updatePasswordField()
         subscribeToFirstNameField()
@@ -93,6 +96,33 @@ class RegistrationFormFragment : DaggerFragment() {
     override fun onDestroy() {
         disposables.dispose()
         super.onDestroy()
+    }
+
+    private fun updateFirstNameField() {
+        sharedViewModel.userFirstName
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                et_user_first_name.setText(it)
+            }.let { disposables.add(it) }
+    }
+
+    private fun updateSurnameField() {
+        sharedViewModel.userSurname
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                et_user_surname.setText(it)
+            }.let { disposables.add(it) }
+    }
+
+    private fun updateUserNameField() {
+        sharedViewModel.userNickname
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                et_user_nickname.setText(it)
+            }.let { disposables.add(it) }
     }
 
     private fun updateEmailField() {
