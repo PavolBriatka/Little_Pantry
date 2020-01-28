@@ -1,13 +1,12 @@
 package com.briatka.pavol.littlepantry.ui.auth.fragments
 
 
-import android.animation.Animator
 import android.animation.ValueAnimator
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewPropertyAnimator
 import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
@@ -17,6 +16,7 @@ import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.HEADER_SCROL
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.HEADER_SCROLL_UP_COEFFICIENT
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
+import com.shuhart.stepview.StepView
 import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -30,6 +30,9 @@ class RegistrationFormFragment : DaggerFragment() {
 
     private val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
+    
+    private lateinit var headerView: StepView
+    private lateinit var mContext: Context
     @Inject
     lateinit var steps: List<String>
 
@@ -38,12 +41,15 @@ class RegistrationFormFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        mContext = requireContext()
         return inflater.inflate(R.layout.fragment_registration_form, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sv_registration_header.setSteps(steps)
+        headerView = view.findViewById(R.id.sv_registration_header)
+
+        headerView.setSteps(steps)
         animateViewsIn(view)
 
         KeyboardVisibilityEvent.setEventListener(
@@ -154,7 +160,7 @@ class RegistrationFormFragment : DaggerFragment() {
         val count = root.childCount
         var offset = resources.getDimensionPixelSize(R.dimen.offset_y).toFloat()
         val interpolator =
-            AnimationUtils.loadInterpolator(context, android.R.interpolator.linear_out_slow_in)
+            AnimationUtils.loadInterpolator(mContext, android.R.interpolator.linear_out_slow_in)
 
         for (i in 0 until count) {
             val mView = root.getChildAt(i)
@@ -172,16 +178,17 @@ class RegistrationFormFragment : DaggerFragment() {
 
     private fun provideHeaderScrollAnimation(heightCoefficient: Float): ValueAnimator {
         val anim = ValueAnimator.ofInt(
-            sv_registration_header.measuredHeight,
-            (sv_registration_header.measuredHeight * heightCoefficient).toInt())
+            headerView.measuredHeight,
+            (headerView.measuredHeight * heightCoefficient).toInt()
+        )
         anim.addUpdateListener {
             val value = it.animatedValue as Int
-            val params = sv_registration_header.layoutParams
+            val params = headerView.layoutParams
             params.height = value
-            sv_registration_header.layoutParams = params
+            headerView.layoutParams = params
 
         }
-        anim.interpolator = AnimationUtils.loadInterpolator(context, android.R.interpolator.linear)
+        anim.interpolator = AnimationUtils.loadInterpolator(mContext, android.R.interpolator.linear)
         anim.duration = 200L
         return anim
     }
