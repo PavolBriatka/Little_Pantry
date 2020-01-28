@@ -5,8 +5,14 @@
     android:id="@+id/cl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
+    android:background="@android:color/white"
     tools:context=".ui.auth.fragments.RegistrationFormFragment">
+
+    <LinearLayout
+        android:id="@+id/ll_header_and_form"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <com.shuhart.stepview.StepView
         android:id="@+id/sv_registration_header"
@@ -45,7 +51,6 @@
         android:id="@+id/sv_registration_form"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="140dp"
         android:overScrollMode="never"
         android:background="@android:color/white"
         android:layout_marginBottom="@dimen/extra_large_margin"
@@ -162,6 +167,8 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    </LinearLayout>
 
     <TextView
         android:id="@+id/btn_create_new_user"
