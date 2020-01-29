@@ -10,12 +10,13 @@
     <com.shuhart.stepview.StepView
         android:id="@+id/sv_registration_header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_height="@dimen/registration_header_height"
+        android:layout_gravity="top"
+        android:background="@android:color/white"
         android:paddingTop="48dp"
         android:paddingStart="@dimen/medium_margin"
         android:paddingEnd="@dimen/medium_margin"
-        android:paddingBottom="@dimen/extra_large_margin"
+        android:paddingBottom="48dp"
         android:transitionName="header_step_view"
         app:layout_constraintTop_toTopOf="parent"
         app:sv_animationDuration="300"
@@ -36,7 +37,8 @@
         app:sv_stepNumberTextSize="12sp"
         app:sv_stepPadding="4dp"
         app:sv_stepViewStyle="@style/StepView"
-        app:sv_stepsNumber="3" />
+        app:sv_stepsNumber="3"
+        android:elevation="4dp"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

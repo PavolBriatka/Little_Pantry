@@ -17,11 +17,11 @@
     <com.shuhart.stepview.StepView
         android:id="@+id/sv_registration_header"
         android:layout_width="match_parent"
-        android:layout_height="140dp"
+        android:layout_height="@dimen/registration_header_height"
         android:layout_gravity="top"
         android:background="@android:color/white"
-        android:paddingStart="@dimen/medium_margin"
         android:paddingTop="48dp"
+        android:paddingStart="@dimen/medium_margin"
         android:paddingEnd="@dimen/medium_margin"
         android:paddingBottom="48dp"
         android:transitionName="header_step_view"

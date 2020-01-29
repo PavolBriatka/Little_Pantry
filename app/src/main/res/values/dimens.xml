@@ -6,4 +6,5 @@
     <dimen name="margin_small">8dp</dimen>
 
     <dimen name="offset_y">500dp</dimen>
+    <dimen name="registration_header_height">140dp</dimen>
 </resources>

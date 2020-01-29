@@ -13,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -23,6 +24,7 @@ import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.ProfilePictureError
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.FILE_PROVIDER_AUTHORITY
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PERMISSION_REQUEST_CAMERA
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_IMAGE_CAPTURE
@@ -41,9 +43,6 @@ import javax.inject.Inject
 
 class UserProfilePictureFragment : DaggerFragment() {
 
-    companion object {
-        private const val FILE_PROVIDER_AUTHORITY = "com.briatka.pavol.fileprovider"
-    }
 
     private val sharedViewModel: AuthViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
@@ -208,10 +207,27 @@ class UserProfilePictureFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 profilePicture?.let {
-                    sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
+                    val animation =
+                        AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_right)
+                    animation.setAnimationListener(listenerAnim())
+                    civ_profile_photo.startAnimation(animation)
+                    //sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
                 }
 
             }.let { disposables.add(it) }
+    }
+
+    private fun listenerAnim(): Animation.AnimationListener {
+        return object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {}
+
+            override fun onAnimationEnd(animation: Animation?) {
+                //sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
+                //civ_profile_photo.setImageBitmap(PhotoUtils.rotateRight(profilePicture!!))
+            }
+
+            override fun onAnimationStart(animation: Animation?) {}
+        }
     }
 
     private fun subscribeToRotateLeftButton() {
