@@ -207,29 +207,12 @@ class UserProfilePictureFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 profilePicture?.let {
-                    val animation =
-                        AnimationUtils.loadAnimation(requireContext(), R.anim.rotate_right)
-                    animation.setAnimationListener(listenerAnim())
-                    civ_profile_photo.startAnimation(animation)
-                    //sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
+                    sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
                 }
 
             }.let { disposables.add(it) }
     }
-
-    private fun listenerAnim(): Animation.AnimationListener {
-        return object : Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation?) {}
-
-            override fun onAnimationEnd(animation: Animation?) {
-                //sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
-                //civ_profile_photo.setImageBitmap(PhotoUtils.rotateRight(profilePicture!!))
-            }
-
-            override fun onAnimationStart(animation: Animation?) {}
-        }
-    }
-
+    
     private fun subscribeToRotateLeftButton() {
         iv_rotate_left.clicks()
             .observeOn(AndroidSchedulers.mainThread())
