@@ -5,6 +5,7 @@
     android:id="@+id/cl_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     tools:context=".ui.auth.fragments.UserProfilePictureFragment">
 
     <com.shuhart.stepview.StepView
@@ -13,8 +14,9 @@
         android:layout_height="@dimen/registration_header_height"
         android:layout_gravity="top"
         android:background="@android:color/white"
-        android:paddingTop="48dp"
+        android:elevation="4dp"
         android:paddingStart="@dimen/medium_margin"
+        android:paddingTop="48dp"
         android:paddingEnd="@dimen/medium_margin"
         android:paddingBottom="48dp"
         android:transitionName="header_step_view"
@@ -37,14 +39,13 @@
         app:sv_stepNumberTextSize="12sp"
         app:sv_stepPadding="4dp"
         app:sv_stepViewStyle="@style/StepView"
-        app:sv_stepsNumber="3"
-        android:elevation="4dp"/>
+        app:sv_stepsNumber="3" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/civ_profile_photo"
@@ -55,36 +56,36 @@
             app:civ_border="true"
             app:civ_border_color="@color/colorAccent"
             app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_rotate_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="84dp"
             android:layout_marginEnd="@dimen/margin_small"
             android:background="@drawable/ic_icon_background"
             android:contentDescription="@string/cd_rotate_profile_picture_left"
             android:padding="6dp"
             android:src="@drawable/ic_rotate_left"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/civ_profile_photo" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/civ_profile_photo"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/iv_rotate_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginTop="84dp"
             android:background="@drawable/ic_icon_background"
             android:contentDescription="@string/cd_rotate_profile_picture_right"
             android:padding="6dp"
             android:src="@drawable/ic_rotate_right"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toEndOf="@id/civ_profile_photo" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/civ_profile_photo"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/upload_options"
