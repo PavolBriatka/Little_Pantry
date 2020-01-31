@@ -20,6 +20,8 @@ interface ViewModelContract {
     val userZipCode: BehaviorSubject<String>
     val userCountry: BehaviorSubject<String>
 
+    val permissionIntentDispatcher: PublishSubject<Int>
+
     fun startUserVerification(flag: String)
     fun startUserRegistration()
     fun finishRegistration()

@@ -25,6 +25,10 @@ import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.DISPATCH_CAMERA_INTENT
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.DISPATCH_GALLERY_INTENT
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PERMISSION_REQUEST_CAMERA
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_PHONE_STATE
 import com.briatka.pavol.littlepantry.utils.CountryHelper
 import com.briatka.pavol.littlepantry.viewmodels.ViewModelsProviderFactory
@@ -196,9 +200,24 @@ class AuthActivity : DaggerAppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        if (requestCode == REQUEST_PHONE_STATE) {
-            if (Build.VERSION.SDK_INT >= 26) setPhoneNumber() else setPhoneCode()
+        when (requestCode) {
+            REQUEST_PHONE_STATE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    if (Build.VERSION.SDK_INT >= 26) setPhoneNumber() else setPhoneCode()
+                }
+            }
+            PERMISSION_REQUEST_CAMERA -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) dispatchTakePictureIntent()
+            READ_EXTERNAL_STORAGE_PERMISSION_REQUEST ->  if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) dispatchOpenGalleryIntent()
+
         }
+    }
+
+    private fun dispatchOpenGalleryIntent() {
+        viewModel.permissionIntentDispatcher.onNext(DISPATCH_GALLERY_INTENT)
+    }
+
+    private fun dispatchTakePictureIntent() {
+        viewModel.permissionIntentDispatcher.onNext(DISPATCH_CAMERA_INTENT)
     }
 
     private fun getAnimatorListener(): Animator.AnimatorListener {

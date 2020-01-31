@@ -13,18 +13,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewTreeObserver
-import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.core.content.FileProvider
 import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.*
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.DISPATCH_CAMERA_INTENT
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.DISPATCH_GALLERY_INTENT
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.FILE_PROVIDER_AUTHORITY
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PERMISSION_REQUEST_CAMERA
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
@@ -87,6 +88,7 @@ class UserProfilePictureFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        subscribeToCameraDispatcher()
         subscribeToUpdateProfileButton()
         subscribeToTakePhotoButton()
         subscribeToPickFromGalleryButton()
@@ -155,17 +157,10 @@ class UserProfilePictureFragment : DaggerFragment() {
                     PhotoUtils.deleteFileFromCache(tempFilePath!!)
                 }
 
-                if (checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                        READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
-                    )
+                if (checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_PERMISSION_REQUEST)
                 } else {
-                    openGallery()
+                    sharedViewModel.permissionIntentDispatcher.onNext(DISPATCH_GALLERY_INTENT)
                 }
             }.let { disposables.add(it) }
     }
@@ -180,17 +175,10 @@ class UserProfilePictureFragment : DaggerFragment() {
                     PhotoUtils.deleteFileFromCache(tempFilePath!!)
                 }
 
-                if (checkSelfPermission(
-                        requireContext(),
-                        Manifest.permission.CAMERA
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    requestPermissions(
-                        arrayOf(Manifest.permission.CAMERA),
-                        PERMISSION_REQUEST_CAMERA
-                    )
+                if (checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
                 } else {
-                    dispatchTakePictureIntent()
+                    sharedViewModel.permissionIntentDispatcher.onNext(DISPATCH_CAMERA_INTENT)
                 }
             }.let { disposables.add(it) }
     }
@@ -232,6 +220,18 @@ class UserProfilePictureFragment : DaggerFragment() {
             .throttleFirst(1000, TimeUnit.MILLISECONDS)
             .subscribe {
                 sharedViewModel.uploadUserProfilePicture()
+            }.let { disposables.add(it) }
+    }
+
+    private fun subscribeToCameraDispatcher() {
+        sharedViewModel.permissionIntentDispatcher
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                when(it) {
+                    DISPATCH_CAMERA_INTENT -> dispatchTakePictureIntent()
+                    DISPATCH_GALLERY_INTENT -> openGallery()
+                }
+
             }.let { disposables.add(it) }
     }
 
@@ -313,32 +313,6 @@ class UserProfilePictureFragment : DaggerFragment() {
                 .setDuration(600L)
                 .start()
             offset *= 1.5f
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            PERMISSION_REQUEST_CAMERA ->
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    dispatchTakePictureIntent()
-                } else {
-                    //TODO: fix
-                }
-            READ_EXTERNAL_STORAGE_PERMISSION_REQUEST ->
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    openGallery()
-                } else {
-                    //TODO: check with PO what should be done in this case
-                    Toast.makeText(
-                        requireContext(),
-                        "Can't open gallery without permission",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
         }
     }
 }

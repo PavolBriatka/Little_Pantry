@@ -49,6 +49,7 @@ class AuthViewModel @Inject constructor(
     override val userCity: BehaviorSubject<String> = BehaviorSubject.create()
     override val userZipCode: BehaviorSubject<String> = BehaviorSubject.create()
     override val userCountry: BehaviorSubject<String> = BehaviorSubject.create()
+    override val permissionIntentDispatcher: PublishSubject<Int> = PublishSubject.create()
 
     init {
         Log.d(TAG, "auth view model initialized")
