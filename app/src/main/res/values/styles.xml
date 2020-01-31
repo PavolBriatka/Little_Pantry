@@ -9,8 +9,8 @@
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/colorPrimary</item>
-        <item name="android:windowBackground">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorAccent</item>
     </style>
 
     <style name="LoginScreenTheme" parent="Theme.AppCompat.Light.NoActionBar">

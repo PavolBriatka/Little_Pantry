@@ -47,5 +47,7 @@
     <string name="hint_zip_code">ZIP code</string>
     <string name="hint_country">Country</string>
     <string name="btn_update_contact_info_label">Update contact info</string>
+    <string name="country_gb">The United Kingdom</string>
+    <string name="country_svk">Slovakia</string>
 
 </resources>

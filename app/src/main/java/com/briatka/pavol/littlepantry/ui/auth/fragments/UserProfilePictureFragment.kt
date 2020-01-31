@@ -23,7 +23,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.ProfilePictureError
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.FILE_PROVIDER_AUTHORITY
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PERMISSION_REQUEST_CAMERA
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNAL_STORAGE_PERMISSION_REQUEST
@@ -125,6 +126,7 @@ class UserProfilePictureFragment : DaggerFragment() {
             REQUEST_IMAGE_CAPTURE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     processImageFromCamera()
+                    sharedViewModel.userProfilePhotoState.onNext(ProfilePictureOk)
                 } else if (resultCode != Activity.RESULT_CANCELED) {
                     sharedViewModel.userProfilePhotoState.onNext(
                         ProfilePictureError(getString(R.string.error_processing_profile_picture))

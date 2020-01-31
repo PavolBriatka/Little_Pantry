@@ -45,6 +45,10 @@ class AuthViewModel @Inject constructor(
     override val userProfilePhoto: BehaviorSubject<Bitmap> = BehaviorSubject.create()
     override val userProfilePhotoState: PublishSubject<ProfilePictureState> = PublishSubject.create()
     override val userPhoneNumber: BehaviorSubject<String> = BehaviorSubject.createDefault("")
+    override val userAddressLine: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userCity: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userZipCode: BehaviorSubject<String> = BehaviorSubject.create()
+    override val userCountry: BehaviorSubject<String> = BehaviorSubject.create()
 
     init {
         Log.d(TAG, "auth view model initialized")

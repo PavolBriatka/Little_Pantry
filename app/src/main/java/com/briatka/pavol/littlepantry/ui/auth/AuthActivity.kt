@@ -146,17 +146,21 @@ class AuthActivity : DaggerAppCompatActivity() {
     }
 
     private fun setPhoneCode() {
+        val countryHelper =  CountryHelper(this)
         try {
             val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
-            val simCountry = telephonyManager.simCountryIso
+            var simCountry = telephonyManager.simCountryIso
 
             if (simCountry != null && simCountry.length == 2) { // SIM country code is available
-                 viewModel.userPhoneNumber.onNext(CountryHelper.getCurrencySymbolFromCode(simCountry.toLowerCase(Locale.US)))
+                 simCountry = simCountry.toLowerCase(Locale.US)
+                 viewModel.userPhoneNumber.onNext(countryHelper.getPhoneCodeFromCountryCode(simCountry))
+                 viewModel.userCountry.onNext(countryHelper.getCountryFromCountryCode(simCountry))
             } else if (telephonyManager.phoneType != TelephonyManager.PHONE_TYPE_CDMA) { // device is not 3G (would be unreliable)
 
                 val networkCountry = telephonyManager.networkCountryIso
                 if (networkCountry != null && networkCountry.length == 2) { // network country code is available
-                     viewModel.userPhoneNumber.onNext(CountryHelper.getCurrencySymbolFromCode(networkCountry.toLowerCase(Locale.US)))
+                     viewModel.userPhoneNumber.onNext(countryHelper.getPhoneCodeFromCountryCode(networkCountry.toLowerCase(Locale.US)))
+                     viewModel.userCountry.onNext(countryHelper.getCountryFromCountryCode(simCountry))
                 }
             }
         } catch (e: Exception) {
@@ -166,12 +170,18 @@ class AuthActivity : DaggerAppCompatActivity() {
     @SuppressLint("MissingPermission", "HardwareIds")
     @RequiresApi(26)
     private fun setPhoneNumber() {
+        val countryHelper =  CountryHelper(this)
         try {
             val telephonyManager = getSystemService(Context.TELEPHONY_SERVICE) as TelephonyManager
             val phoneNumber = telephonyManager.line1Number
+            var simCountry = telephonyManager.simCountryIso
 
             if (phoneNumber != null) {
                 viewModel.userPhoneNumber.onNext("+$phoneNumber")
+                if (simCountry != null) {
+                    simCountry = simCountry.toLowerCase(Locale.US)
+                    viewModel.userCountry.onNext(countryHelper.getCountryFromCountryCode(simCountry))
+                }
             } else {
                 //If we cannot get the whole phone number we can try to set at least the country phone code
                 setPhoneCode()
