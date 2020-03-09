@@ -23,6 +23,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".ui.main.MainActivity"
+            android:launchMode="singleTop"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".SplashActivity"

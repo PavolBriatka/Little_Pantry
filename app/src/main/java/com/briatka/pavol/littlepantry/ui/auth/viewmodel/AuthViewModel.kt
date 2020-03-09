@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.briatka.pavol.littlepantry.models.NewUser
+import com.briatka.pavol.littlepantry.models.UserContactData
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
@@ -18,6 +19,7 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
 import io.reactivex.functions.Function4
+import io.reactivex.functions.Function5
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import javax.inject.Inject
@@ -96,20 +98,17 @@ class AuthViewModel @Inject constructor(
     }
 
     override fun startUserRegistration() {
-        userState.postValue(StartUserRegistration)
-        //TODO: Enable proper user registration once UI elements are tested and done
-        Handler().postDelayed({
-            userState.postValue(RegistrationSuccessful)
-        }, 1500)
 
-       /* Observable.combineLatest(userEmail.hide(), userPassword.hide(),
+        userState.postValue(StartUserRegistration)
+
+       Observable.combineLatest(userEmail.hide(), userPassword.hide(),
             BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
             })
             .firstElement()
             .subscribe { userCredentials ->
                 registerNewUser(userCredentials.first, userCredentials.second)
-            }.let { disposables.add(it) }*/
+            }.let { disposables.add(it) }
     }
 
     private fun registerNewUser(email: String, password: String) {
@@ -118,19 +117,17 @@ class AuthViewModel @Inject constructor(
                 if (task.isSuccessful) {
                     updateDbProfileInfo()
                 } else {
-                    userState.postValue(
-                        RegistrationFailure(
-                            task.exception?.message ?: ERROR_UNSPECIFIED
-                        )
-                    )
+                    //TODO: Create a general error message in case the exception does not provide one
+                    userState.postValue(DataUpdateFailed(task.exception?.message ?: ERROR_UNSPECIFIED))
                 }
-
             }
     }
 
     private fun updateDbProfileInfo() {
+
         val userId = firebaseAuth.currentUser?.uid
         val dbUserReference = firestoreDb.collection("users").document(userId!!)
+
         Observable.combineLatest(userFirstName.hide(),
             userSurname.hide(),
             userNickname.hide(),
@@ -141,7 +138,7 @@ class AuthViewModel @Inject constructor(
             .firstElement()
             .subscribe { newUser ->
                 dbUserReference.set(newUser)
-                    .addOnSuccessListener { userState.postValue(RegistrationSuccessful) }
+                    .addOnSuccessListener { userState.postValue(SetUserProfilePicture) }
                     .addOnFailureListener { Log.w(TAG, it.message) }
             }.let { disposables.add(it) }
     }
@@ -153,12 +150,32 @@ class AuthViewModel @Inject constructor(
          * Mock image upload and proceed to anther screen
          * */
         Handler().postDelayed({
-            userState.postValue(ProfilePictureUploadSuccessful)
+            userState.postValue(CollectContactInfo)
         }, 1500)
     }
 
     override fun finishRegistration() {
-        userState.postValue(RegistrationFinalized)
+
+        userState.postValue(SubmitContactInfo)
+
+        val userId = firebaseAuth.currentUser?.uid
+        val dbReference = firestoreDb.collection("users").document(userId!!).collection("contact_info").document(userId)
+
+        Observable.combineLatest(userPhoneNumber.hide(),
+            userAddressLine.hide(),
+            userCity.hide(),
+            userZipCode.hide(),
+            userCountry.hide(),
+            Function5<String, String, String, String, String, UserContactData> {phoneNo, addressLine, city, zipCode, country ->
+                UserContactData(phoneNo, addressLine, city, zipCode, country)
+            })
+            .firstElement()
+            .subscribe {contactData ->
+                dbReference.set(contactData)
+                    .addOnSuccessListener { userState.postValue(RegistrationFinalized) }
+                        //TODO: Create a general error message in case the exception does not provide one
+                    .addOnFailureListener { userState.postValue(DataUpdateFailed(it.message ?: ERROR_UNSPECIFIED)) }
+            }.let { disposables.add(it) }
     }
 
     override fun startUserLogin() {

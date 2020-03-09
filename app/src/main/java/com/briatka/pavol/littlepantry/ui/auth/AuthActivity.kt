@@ -86,8 +86,9 @@ class AuthActivity : DaggerAppCompatActivity() {
                     mainNavController.navigate(R.id.action_start_registration)
                 }
                 StartUserRegistration,
-                UploadUserProfilePicture -> generic_loading_spinner.visibility = View.VISIBLE
-                RegistrationSuccessful -> {
+                UploadUserProfilePicture,
+                SubmitContactInfo -> generic_loading_spinner.visibility = View.VISIBLE
+                SetUserProfilePicture -> {
                     //Prepare extras for shared element
                     val extras = FragmentNavigatorExtras(sv_registration_header to "header_step_view")
                     //Trigger navigation to next fragment
@@ -95,12 +96,12 @@ class AuthActivity : DaggerAppCompatActivity() {
                     //Launch animation to "slide out" the loading screen as the fragment slides in
                     loadingScreenSwitch()
                 }
-                ProfilePictureUploadSuccessful -> {
+                CollectContactInfo -> {
                     /**
                      * After a successful upload we are going to collect contact information from the user.
                      * To automate the process we are going to try and get the phone number directly from
                      * the device (allowed from API >= 26) or at least country code of SIM card. To access
-                     * either of the information we need user's permission to READ PHONE STATE*/
+                     * either of the information we need user's permission to READ PHONE STATE */
                     checkPermissions()
                     //Prepare extras for shared element
                     val extras = FragmentNavigatorExtras(sv_registration_header to "header_step_view")
@@ -109,9 +110,17 @@ class AuthActivity : DaggerAppCompatActivity() {
                     //Launch animation to "slide out" the loading screen as the fragment slides in
                     loadingScreenSwitch()
                 }
-                RegistrationFinalized -> mainNavController.navigate(R.id.action_open_main_activity)
+                RegistrationFinalized -> {
+                    /**
+                     * The last step in the (successful) registration flow */
+                    mainNavController.navigate(R.id.action_open_main_activity)
+                    //Launch animation to "slide out" the loading screen
+                    loadingScreenSwitch()
+                    // Finish the activity otherwise the user will be able to navigate back from main activity - not desirable
+                    finish()
+                }
                 AuthLoginSuccessful -> mainNavController.navigate(R.id.action_open_main_activity)
-                is RegistrationFailure -> Toast.makeText(
+                is DataUpdateFailed -> Toast.makeText(
                     this,
                     userState.error,
                     Toast.LENGTH_LONG

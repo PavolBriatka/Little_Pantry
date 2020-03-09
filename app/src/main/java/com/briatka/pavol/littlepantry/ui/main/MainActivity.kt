@@ -18,7 +18,6 @@ import com.google.android.material.navigation.NavigationView.OnNavigationItemSel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseUser
 import dagger.android.support.DaggerAppCompatActivity
-import kotlinx.android.synthetic.main.activity_auth.*
 import kotlinx.android.synthetic.main.activity_main.*
 import javax.inject.Inject
 
@@ -86,6 +85,7 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
             }
             R.id.action_logout -> {
                 viewModel.logout()
+                finish()
             }
         }
 

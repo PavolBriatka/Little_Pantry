@@ -14,6 +14,7 @@ import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.utils.AuthConstants
+import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.shuhart.stepview.StepView
 import dagger.android.support.DaggerFragment
@@ -21,6 +22,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.fragment_user_contact_info.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class UserContactInfoFragment : DaggerFragment() {
@@ -112,6 +114,7 @@ class UserContactInfoFragment : DaggerFragment() {
         citySubscription()
         zipCodeSubscription()
         countrySubscription()
+        subscribeToUpdateInfoButton()
     }
 
     override fun onStop() {
@@ -226,6 +229,15 @@ class UserContactInfoFragment : DaggerFragment() {
                 }
                 et_country.tag = null
             }.let { disposables.add(it) }
+    }
+
+    private fun subscribeToUpdateInfoButton() {
+        btn_update_contact_info.clicks()
+            .observeOn(AndroidSchedulers.mainThread())
+            .throttleFirst(1000, TimeUnit.MILLISECONDS)
+            .subscribe {
+                sharedViewModel.finishRegistration()
+            }. let { disposables.add(it) }
     }
 
     //region Animation functions

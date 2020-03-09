@@ -13,14 +13,21 @@ sealed class UserState {
 
     //for registration
     object UserAlreadyExist: UserState()
+    //(step I. - collect user input)
     object CreateNewUser: UserState()
+    //(step I. - processing)
     object StartUserRegistration: UserState()
-    object RegistrationSuccessful: UserState()
-    class RegistrationFailure(val error: String): UserState()
-    object UpdateUserProfilePicture: UserState() // waiting for user to prepare his photo
-    object UploadUserProfilePicture: UserState() // when user submits photo for upload
-    object ProfilePictureUploadSuccessful: UserState()
-    class ProfilePictureUploadFailure(val error: String): UserState()
+    //(step I. - success result (overlaps with) step II. - collect user input)
+    object SetUserProfilePicture: UserState()
+    //(step II. - processing)
+    object UploadUserProfilePicture: UserState()
+    // (step II. -  success result (overlaps with) step III. - collect user input)
+    object CollectContactInfo: UserState()
+    //(step III. - processing)
+    object SubmitContactInfo: UserState()
+    //(step III. - success result)
     object RegistrationFinalized: UserState()
+    //(step I., II., III. - failed result)
+    class DataUpdateFailed(val error: String): UserState()
 
 }
