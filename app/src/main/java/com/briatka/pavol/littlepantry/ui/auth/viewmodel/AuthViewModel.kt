@@ -96,10 +96,11 @@ class AuthViewModel @Inject constructor(
     }
 
     override fun startUserRegistration() {
-        userState.postValue(StartUserRegistration) //associate with loading element (progress bar/ fragment)
+        userState.postValue(StartUserRegistration)
+        //TODO: Enable proper user registration once UI elements are tested and done
         Handler().postDelayed({
             userState.postValue(RegistrationSuccessful)
-        }, 3000)
+        }, 1500)
 
        /* Observable.combineLatest(userEmail.hide(), userPassword.hide(),
             BiFunction<String, String, Pair<String, String>> { email, password ->
@@ -147,9 +148,13 @@ class AuthViewModel @Inject constructor(
 
     override fun uploadUserProfilePicture() {
         userState.postValue(UploadUserProfilePicture)
+        //TODO: upload picture using Firestore
+        /**
+         * Mock image upload and proceed to anther screen
+         * */
         Handler().postDelayed({
             userState.postValue(ProfilePictureUploadSuccessful)
-        }, 3000)
+        }, 1500)
     }
 
     override fun finishRegistration() {

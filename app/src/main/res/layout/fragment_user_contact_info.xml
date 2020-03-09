@@ -76,6 +76,7 @@
                         android:id="@+id/et_email_address"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
                         android:textSize="14sp"
                         tools:text="jane.doe@yahoo.co.uk" />
 
@@ -113,6 +114,7 @@
                         android:id="@+id/et_address_line"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textPostalAddress"
                         android:textSize="14sp"
                         tools:text="One Canada Square" />
 
@@ -131,6 +133,7 @@
                         android:id="@+id/et_city"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="text"
                         android:textSize="14sp"
                         tools:text="London" />
 
@@ -149,6 +152,7 @@
                         android:id="@+id/et_zip_code"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="text"
                         android:textSize="14sp"
                         tools:text="E14 5AB" />
 
@@ -167,6 +171,7 @@
                         android:id="@+id/et_country"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="text"
                         android:textSize="14sp"
                         tools:text="The United Kingdom" />
 
