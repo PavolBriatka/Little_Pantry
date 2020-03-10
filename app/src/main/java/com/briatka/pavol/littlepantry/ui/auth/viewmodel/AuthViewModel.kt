@@ -11,10 +11,13 @@ import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
@@ -22,11 +25,13 @@ import io.reactivex.functions.Function4
 import io.reactivex.functions.Function5
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
+import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(
     private val firebaseAuth: FirebaseAuth,
-    private val firestoreDb: FirebaseFirestore
+    private val firestoreDb: FirebaseFirestore,
+    private val firebaseStorage: FirebaseStorage
 ) : ViewModel(),
     ViewModelContract {
 
@@ -142,13 +147,34 @@ class AuthViewModel @Inject constructor(
 
     override fun uploadUserProfilePicture() {
         userState.postValue(UploadUserProfilePicture)
-        //TODO: upload picture using Firestore
-        /**
-         * Mock image upload and proceed to anther screen
-         * */
-        Handler().postDelayed({
-            userState.postValue(CollectContactInfo)
-        }, 1500)
+
+        val userId = firebaseAuth.currentUser?.uid
+        userId?.let {uid ->
+            val fileName = "${System.currentTimeMillis()}.bmp"
+            val storageReference = firebaseStorage.reference.child("$uid/profile_photo/$fileName")
+            storageReference.putBytes(preparePicture())
+                .addOnSuccessListener {
+                    savePhotoName(fileName)
+                    userState.postValue(CollectContactInfo)
+                }
+                .addOnFailureListener{
+                    userState.postValue(DataUpdateFailed(it.message ?: ERROR_UNSPECIFIED))
+                }
+        }
+    }
+
+    private fun savePhotoName(fileName: String) {
+        val userId = firebaseAuth.currentUser?.uid
+        val dbReference = firestoreDb.collection("users").document(userId!!).collection("profile_photo_reference").document(userId)
+        dbReference.set(mapOf(Pair("photoReference", fileName)))
+    }
+
+    private fun preparePicture(): ByteArray {
+        userProfilePhoto.hide().blockingFirst().let {
+            val stream = ByteArrayOutputStream()
+            it.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            return stream.toByteArray()
+        }
     }
 
     override fun finishRegistration() {

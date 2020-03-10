@@ -4,6 +4,7 @@ import android.app.Application
 import com.briatka.pavol.littlepantry.ConnectivityLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -21,6 +22,12 @@ class AppModule {
     @Provides
     fun provideFirestoreInstance(): FirebaseFirestore {
         return FirebaseFirestore.getInstance()
+    }
+
+    @Singleton
+    @Provides
+    fun provideStorageInstance(): FirebaseStorage {
+        return FirebaseStorage.getInstance()
     }
 
     @Singleton
