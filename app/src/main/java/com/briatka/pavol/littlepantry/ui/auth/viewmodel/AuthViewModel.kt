@@ -53,9 +53,6 @@ class AuthViewModel @Inject constructor(
     override val userCountry: BehaviorSubject<String> = BehaviorSubject.create()
     override val permissionIntentDispatcher: PublishSubject<Int> = PublishSubject.create()
 
-    init {
-        Log.d(TAG, "auth view model initialized")
-    }
 
     override fun startUserVerification(flag: String) {
         userState.postValue(AuthInProgress(flag))
