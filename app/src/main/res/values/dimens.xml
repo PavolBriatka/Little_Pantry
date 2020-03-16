@@ -4,6 +4,7 @@
     <dimen name="large_margin">32dp</dimen>
     <dimen name="medium_margin">16dp</dimen>
     <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_extra_small">4dp</dimen>
 
     <dimen name="offset_y">500dp</dimen>
     <dimen name="registration_header_height">140dp</dimen>

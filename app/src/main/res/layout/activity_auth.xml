@@ -25,6 +25,6 @@
         android:visibility="gone"
         android:paddingStart="@dimen/extra_large_margin"
         android:paddingEnd="@dimen/extra_large_margin"
-        app:SpinKit_Color="@color/colorAccent" />
+        app:SpinKit_Color="@color/colorPrimary" />
 
 </FrameLayout>

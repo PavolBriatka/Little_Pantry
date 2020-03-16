@@ -69,7 +69,7 @@
         android:gravity="center"
         android:padding="@dimen/margin_small"
         android:text="@string/log_in_label"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorPrimary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tl_login_password" />
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:visibility="gone"
-        app:SpinKit_Color="@color/colorAccent"
+        app:SpinKit_Color="@color/colorPrimary"
         app:layout_constraintTop_toTopOf="@id/btn_login_email_password" />
 
     <TextView
@@ -90,7 +90,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/medium_margin"
         android:text="@string/sign_up_label"
-        android:textColor="@color/colorAccent"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/btn_login_email_password" />
@@ -102,7 +102,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_small"
         android:visibility="gone"
-        app:SpinKit_Color="@color/colorAccent"
+        app:SpinKit_Color="@color/colorPrimary"
         app:layout_constraintTop_toTopOf="@id/tv_sign_up" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

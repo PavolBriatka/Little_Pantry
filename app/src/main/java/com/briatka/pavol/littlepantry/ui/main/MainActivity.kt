@@ -1,5 +1,6 @@
 package com.briatka.pavol.littlepantry.ui.main
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
@@ -18,7 +19,11 @@ import com.google.android.material.navigation.NavigationView.OnNavigationItemSel
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseUser
 import dagger.android.support.DaggerAppCompatActivity
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.drawer_header.*
 import javax.inject.Inject
 
 class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener {
@@ -26,6 +31,8 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
     private lateinit var viewModel: MainViewModel
     private lateinit var navController: NavController
     private lateinit var connectivitySnackbar: Snackbar
+    private val disposables = CompositeDisposable()
+
 
 
     @Inject
@@ -40,6 +47,8 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
         setContentView(R.layout.activity_main)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
+        viewModel.fetchUserData()
+
         navController = this.findNavController(R.id.main_nav_host_fragment)
 
         connectivitySnackbar = Snackbar.make(
@@ -51,6 +60,38 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
         init()
         subscribeToUserState()
         subscribeToConnectivityStatus()
+        subscribeToProfilePhoto()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        disposables.addAll(subscribeToProfilePhoto(),
+            subscribeToUserData())
+    }
+
+    override fun onStop() {
+        disposables.clear()
+        super.onStop()
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun subscribeToUserData(): Disposable {
+        return viewModel.userData.hide()
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                tv_header_nickname.text = "(${it.nickname})"
+                tv_header_user_name.text = "${it.firstName} ${it.surname}"
+            }
+    }
+
+    private fun subscribeToProfilePhoto(): Disposable {
+         return viewModel.profilePhoto.hide()
+            .observeOn(AndroidSchedulers.mainThread())
+            .firstElement()
+            .subscribe {
+                civ_profile_photo.setImageBitmap(it)
+            }
     }
 
     private fun subscribeToConnectivityStatus() {
