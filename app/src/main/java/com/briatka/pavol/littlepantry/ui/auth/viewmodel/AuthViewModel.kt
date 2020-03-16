@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.briatka.pavol.littlepantry.models.NewUser
+import com.briatka.pavol.littlepantry.models.UserData
 import com.briatka.pavol.littlepantry.models.UserContactData
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.CONTACT_INFO_PATH
@@ -135,8 +135,8 @@ class AuthViewModel @Inject constructor(
                 userSurname.hide(),
                 userNickname.hide(),
                 userEmail.hide(),
-                Function4<String, String, String, String, NewUser> { firstName, surname, nickname, email ->
-                    NewUser(firstName, surname, nickname, email)
+                Function4<String, String, String, String, UserData> { firstName, surname, nickname, email ->
+                    UserData(firstName, surname, nickname, email)
                 })
                 .firstElement()
                 .subscribe { newUser ->

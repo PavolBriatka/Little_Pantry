@@ -49,5 +49,6 @@
     <string name="btn_update_contact_info_label">Update contact info</string>
     <string name="country_gb">The United Kingdom</string>
     <string name="country_svk">Slovakia</string>
+    <string name="inbox_label">Inbox</string>
 
 </resources>
