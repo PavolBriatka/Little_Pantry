@@ -19,5 +19,10 @@ class AuthConstants {
         const val HEADER_SCROLL_UP_COEFFICIENT = 0.7f
         const val HEADER_SCROLL_DOWN_COEFFICIENT = 1.43f
         const val FILE_PROVIDER_AUTHORITY = "com.briatka.pavol.fileprovider"
+        //DB collection paths
+        const val USERS_PATH = "users"
+        const val CONTACT_INFO_PATH = "contact_info"
+        const val PROFILE_PHOTO_REFERENCE_PATH = "profile_photo_reference"
+        const val PROFILE_PHOTO_REFERENCE = "profilePhotoReference"
     }
 }

@@ -1,23 +1,24 @@
 package com.briatka.pavol.littlepantry.ui.auth.viewmodel
 
 import android.graphics.Bitmap
-import android.os.Handler
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.briatka.pavol.littlepantry.models.NewUser
 import com.briatka.pavol.littlepantry.models.UserContactData
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.CONTACT_INFO_PATH
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PROFILE_PHOTO_REFERENCE
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PROFILE_PHOTO_REFERENCE_PATH
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REGISTER_FLAG
-import com.google.android.gms.tasks.OnSuccessListener
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.USERS_PATH
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.functions.BiFunction
@@ -103,7 +104,7 @@ class AuthViewModel @Inject constructor(
 
         userState.postValue(StartUserRegistration)
 
-       Observable.combineLatest(userEmail.hide(), userPassword.hide(),
+        Observable.combineLatest(userEmail.hide(), userPassword.hide(),
             BiFunction<String, String, Pair<String, String>> { email, password ->
                 Pair(email, password)
             })
@@ -127,78 +128,98 @@ class AuthViewModel @Inject constructor(
 
     private fun updateDbProfileInfo() {
 
-        val userId = firebaseAuth.currentUser?.uid
-        val dbUserReference = firestoreDb.collection("users").document(userId!!)
+        firebaseAuth.currentUser?.uid?.let { userId ->
+            val dbUserReference = firestoreDb.collection(USERS_PATH).document(userId)
 
-        Observable.combineLatest(userFirstName.hide(),
-            userSurname.hide(),
-            userNickname.hide(),
-            userEmail.hide(),
-            Function4<String, String, String, String, NewUser> { firstName, surname, nickname, email ->
-                NewUser(firstName, surname, nickname, email)
-            })
-            .firstElement()
-            .subscribe { newUser ->
-                dbUserReference.set(newUser)
-                    .addOnSuccessListener { userState.postValue(SetUserProfilePicture) }
-                    .addOnFailureListener { Log.w(TAG, it.message) }
-            }.let { disposables.add(it) }
+            Observable.combineLatest(userFirstName.hide(),
+                userSurname.hide(),
+                userNickname.hide(),
+                userEmail.hide(),
+                Function4<String, String, String, String, NewUser> { firstName, surname, nickname, email ->
+                    NewUser(firstName, surname, nickname, email)
+                })
+                .firstElement()
+                .subscribe { newUser ->
+                    dbUserReference.set(newUser)
+                        .addOnSuccessListener { userState.postValue(SetUserProfilePicture) }
+                        .addOnFailureListener { Log.w(TAG, it.message) }
+                }.let { disposables.add(it) }
+        }
     }
 
     override fun uploadUserProfilePicture() {
         userState.postValue(UploadUserProfilePicture)
 
-        val userId = firebaseAuth.currentUser?.uid
-        userId?.let {uid ->
-            val fileName = "${System.currentTimeMillis()}.bmp"
-            val storageReference = firebaseStorage.reference.child("$uid/profile_photo/$fileName")
-            storageReference.putBytes(preparePicture())
-                .addOnSuccessListener {
-                    savePhotoName(fileName)
-                    userState.postValue(CollectContactInfo)
+        firebaseAuth.currentUser?.uid?.let { uid ->
+            userProfilePhoto.hide()
+                .map {
+                    preparePicture(it)
                 }
-                .addOnFailureListener{
-                    userState.postValue(DataUpdateFailed(it.message ?: ERROR_UNSPECIFIED))
-                }
+                .firstElement()
+                .subscribe { pictureByteArray ->
+
+                    val fileName = "${System.currentTimeMillis()}.bmp"
+                    val storageReference = firebaseStorage.reference.child("$uid/profile_photo/$fileName")
+                    storageReference.putBytes(pictureByteArray)
+                        .addOnSuccessListener {
+                            savePhotoName(fileName)
+                            userState.postValue(CollectContactInfo)
+                        }
+                        .addOnFailureListener {
+                            userState.postValue(DataUpdateFailed(it.message ?: ERROR_UNSPECIFIED))
+                        }
+                }.let { disposables.add(it) }
         }
     }
 
     private fun savePhotoName(fileName: String) {
-        val userId = firebaseAuth.currentUser?.uid
-        val dbReference = firestoreDb.collection("users").document(userId!!).collection("profile_photo_reference").document(userId)
-        dbReference.set(mapOf(Pair("photoReference", fileName)))
+        firebaseAuth.currentUser?.uid?.let { userId ->
+            val dbReference = firestoreDb.collection(USERS_PATH)
+                .document(userId)
+                .collection(PROFILE_PHOTO_REFERENCE_PATH).document(userId)
+
+            dbReference.set(mapOf(Pair(PROFILE_PHOTO_REFERENCE, fileName)))
+        }
     }
 
-    private fun preparePicture(): ByteArray {
-        userProfilePhoto.hide().blockingFirst().let {
-            val stream = ByteArrayOutputStream()
-            it.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            return stream.toByteArray()
-        }
+    private fun preparePicture(profilePicture: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        profilePicture.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        return stream.toByteArray()
+
     }
 
     override fun finishRegistration() {
 
         userState.postValue(SubmitContactInfo)
 
-        val userId = firebaseAuth.currentUser?.uid
-        val dbReference = firestoreDb.collection("users").document(userId!!).collection("contact_info").document(userId)
+        firebaseAuth.currentUser?.uid?.let { userId ->
+            val dbReference =
+                firestoreDb.collection(USERS_PATH).document(userId).collection(CONTACT_INFO_PATH)
+                    .document(userId)
 
-        Observable.combineLatest(userPhoneNumber.hide(),
-            userAddressLine.hide(),
-            userCity.hide(),
-            userZipCode.hide(),
-            userCountry.hide(),
-            Function5<String, String, String, String, String, UserContactData> {phoneNo, addressLine, city, zipCode, country ->
-                UserContactData(phoneNo, addressLine, city, zipCode, country)
-            })
-            .firstElement()
-            .subscribe {contactData ->
-                dbReference.set(contactData)
-                    .addOnSuccessListener { userState.postValue(RegistrationFinalized) }
+            Observable.combineLatest(userPhoneNumber.hide(),
+                userAddressLine.hide(),
+                userCity.hide(),
+                userZipCode.hide(),
+                userCountry.hide(),
+                Function5<String, String, String, String, String, UserContactData> { phoneNo, addressLine, city, zipCode, country ->
+                    UserContactData(phoneNo, addressLine, city, zipCode, country)
+                })
+                .firstElement()
+                .subscribe { contactData ->
+                    dbReference.set(contactData)
+                        .addOnSuccessListener { userState.postValue(RegistrationFinalized) }
                         //TODO: Create a general error message in case the exception does not provide one
-                    .addOnFailureListener { userState.postValue(DataUpdateFailed(it.message ?: ERROR_UNSPECIFIED)) }
-            }.let { disposables.add(it) }
+                        .addOnFailureListener {
+                            userState.postValue(
+                                DataUpdateFailed(
+                                    it.message ?: ERROR_UNSPECIFIED
+                                )
+                            )
+                        }
+                }.let { disposables.add(it) }
+        }
     }
 
     override fun startUserLogin() {

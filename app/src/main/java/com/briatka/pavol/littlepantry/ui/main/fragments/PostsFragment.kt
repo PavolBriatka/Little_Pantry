@@ -11,7 +11,9 @@ import android.widget.Toast
 
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.models.NewUser
+import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PROFILE_PHOTO_REFERENCE
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.GenericTypeIndicator
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import dagger.android.support.DaggerFragment
@@ -56,9 +58,10 @@ class PostsFragment : DaggerFragment() {
                     tv_nickname.text = data?.nickname ?: "error"
                 }
             photoReference.get()
-                .addOnSuccessListener {
-                    val data = it.toObject(HashMap::class.java)
-                    setProfileImage(user.uid, data?.get("photoReference") as String)
+                .addOnSuccessListener { snapshot ->
+                    snapshot.get(PROFILE_PHOTO_REFERENCE, String::class.java)?.let {
+                        setProfileImage(user.uid, it)
+                    }
                 }
 
         }
