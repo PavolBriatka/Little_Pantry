@@ -20,9 +20,6 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_posts.*
 import javax.inject.Inject
 
-/**
- * A simple [Fragment] subclass.
- */
 class PostsFragment : DaggerFragment() {
 
     @Inject
