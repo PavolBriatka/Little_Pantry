@@ -20,6 +20,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
@@ -27,7 +36,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.core:core-ktx:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
 
     //Material lib
     def material_version = "1.0.0"
@@ -42,27 +51,58 @@ dependencies {
     implementation "android.arch.lifecycle:reactivestreams:$reactivestreams_version"
 
     // ViewModel and LiveData
-    def lifecycle_version = '2.2.0-alpha05'
+    def lifecycle_version = '2.2.0'
     implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+
+    //RxBinding
+    implementation 'com.jakewharton.rxbinding3:rxbinding-appcompat:3.0.0'
 
     //Dagger
-    api 'com.google.dagger:dagger:2.22'
-    kapt 'com.google.dagger:dagger-compiler:2.22'
-    api 'com.google.dagger:dagger-android:2.22'
-    api 'com.google.dagger:dagger-android-support:2.22' // if you use the support libraries
-    kapt 'com.google.dagger:dagger-android-processor:2.22'
+    api 'com.google.dagger:dagger:2.22.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    kapt 'com.google.dagger:dagger-compiler:2.22.1'
+    api 'com.google.dagger:dagger-android:2.22.1'
+    api 'com.google.dagger:dagger-android-support:2.22.1' // if you use the support libraries
+    kapt 'com.google.dagger:dagger-android-processor:2.22.1'
 
     //Firebase libs
-    implementation 'com.google.firebase:firebase-analytics:17.2.0'
-    implementation 'com.google.firebase:firebase-database:19.1.0'
-    implementation 'com.google.firebase:firebase-auth:19.1.0'
-    implementation 'com.google.firebase:firebase-storage:19.1.0'
+    implementation 'com.google.firebase:firebase-analytics:17.2.3'
+    implementation 'com.google.firebase:firebase-database:19.2.1'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.4.1'
+
+    // Navigation
+    def nav_version = "2.2.1"
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+    implementation 'androidx.fragment:fragment-ktx:1.2.2'
 
     //Glide
-    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 
+    //Custom progressbar animations
+    implementation 'com.github.ybq:Android-SpinKit:1.4.0'
+    //Step view library
+    implementation 'com.shuhart.stepview:stepview:1.5.0'
+    //Custom round ImageView
+    implementation 'com.mikhaellopez:circularimageview:4.1.0'
+    //Exif interface to rotate images
+    implementation "androidx.exifinterface:exifinterface:1.1.0"
+    //Picasso image loader
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    //Lib to attach soft keyboard listener
+    implementation 'net.yslibrary.keyboardvisibilityevent:keyboardvisibilityevent:2.3.0'
+
     testImplementation 'junit:junit:4.12'
+    testImplementation "androidx.test.ext:junit:1.1.1"
+    testImplementation "androidx.test:core:1.2.0"
+    testImplementation "org.mockito:mockito-core:3.0.0"
+    testImplementation "com.nhaarman:mockito-kotlin:1.5.0"
+    testImplementation 'android.arch.core:core-testing:1.1.1'
+
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }

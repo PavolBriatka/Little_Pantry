@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_graph"
+    app:startDestination="@id/postsFragment">
+
+    <fragment
+        android:id="@+id/postsFragment"
+        android:name="com.briatka.pavol.littlepantry.ui.main.fragments.PostsFragment"
+        android:label="@string/posts_fragment_label"
+        tools:layout="@layout/fragment_posts" />
+
+    <activity
+        android:id="@+id/authActivity"
+        android:name="com.briatka.pavol.littlepantry.ui.auth.AuthActivity"
+        android:label="@string/auth_activity_graph_label"
+        tools:layout="@layout/activity_auth" />
+
+    <action
+        android:id="@+id/action_open_auth_activity"
+        app:destination="@id/authActivity" />
+
+</navigation>
