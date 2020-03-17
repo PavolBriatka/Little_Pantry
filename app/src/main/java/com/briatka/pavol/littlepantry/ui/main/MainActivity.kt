@@ -2,7 +2,10 @@ package com.briatka.pavol.littlepantry.ui.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.widget.AdapterView
+import android.widget.ListView
 import android.widget.Toast
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
@@ -12,6 +15,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.briatka.pavol.littlepantry.ConnectivityLiveData
 import com.briatka.pavol.littlepantry.R
+import com.briatka.pavol.littlepantry.ui.main.adapters.DrawerMenuAdapter
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.FirebaseAuthLiveData
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.MainViewModel
 import com.briatka.pavol.littlepantry.viewmodels.ViewModelsProviderFactory
@@ -41,6 +45,8 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
     lateinit var firebaseAuthStatus: FirebaseAuthLiveData
     @Inject
     lateinit var connectivityStatus: ConnectivityLiveData
+    @Inject
+    lateinit var drawerMenuItems: List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +57,11 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
 
         navController = this.findNavController(R.id.main_nav_host_fragment)
 
-        connectivitySnackbar = Snackbar.make(
-            main_drawer_layout,
+        connectivitySnackbar = Snackbar.make(main_drawer_layout,
             getString(R.string.snackbar_lost_connection_message),
-            Snackbar.LENGTH_INDEFINITE
-        )
+            Snackbar.LENGTH_INDEFINITE)
 
-        init()
+        initDrawer()
         subscribeToUserState()
         subscribeToConnectivityStatus()
         subscribeToProfilePhoto()
@@ -114,10 +118,27 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
         })
     }
 
-    private fun init() {
+    private fun initDrawer() {
         NavigationUI.setupActionBarWithNavController(this, navController, main_drawer_layout)
         NavigationUI.setupWithNavController(main_navigation_view, navController)
         main_navigation_view.setNavigationItemSelectedListener(this)
+
+        val listView = findViewById<ListView>(R.id.rl_drawer_menu_items)
+        val adapter = DrawerMenuAdapter(this).also {
+            it.setMenuItems(drawerMenuItems)
+        }
+
+        listView.adapter = adapter
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            when (id) {
+                0L -> {/*nav to profile*/}
+                1L -> {/*nav to inbox*/}
+                2L -> {
+                    viewModel.logout()
+                    finish()
+                }
+            }
+        }
     }
 
     override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {

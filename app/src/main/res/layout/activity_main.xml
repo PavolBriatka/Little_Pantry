@@ -36,8 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:menu="@menu/menu_drawer_layout">
+        android:fitsSystemWindows="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,7 +45,14 @@
             <include
                 android:id="@+id/rl_drawer_header"
                 layout="@layout/drawer_header"/>
-            
+
+            <ListView
+                android:id="@+id/rl_drawer_menu_items"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_drawer_header"
+                android:divider="@null"/>
+
         </RelativeLayout>
 
     </com.google.android.material.navigation.NavigationView>
