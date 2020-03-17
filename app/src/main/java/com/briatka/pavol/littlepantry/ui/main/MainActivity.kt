@@ -30,7 +30,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import javax.inject.Inject
 
-class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener {
+class MainActivity : DaggerAppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var navController: NavController
@@ -121,7 +121,6 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
     private fun initDrawer() {
         NavigationUI.setupActionBarWithNavController(this, navController, main_drawer_layout)
         NavigationUI.setupWithNavController(main_navigation_view, navController)
-        main_navigation_view.setNavigationItemSelectedListener(this)
 
         val listView = findViewById<ListView>(R.id.rl_drawer_menu_items)
         val adapter = DrawerMenuAdapter(this).also {
@@ -139,21 +138,6 @@ class MainActivity : DaggerAppCompatActivity(), OnNavigationItemSelectedListener
                 }
             }
         }
-    }
-
-    override fun onNavigationItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
-            R.id.nav_profile -> {
-            }
-            R.id.action_logout -> {
-                viewModel.logout()
-                finish()
-            }
-        }
-
-        menuItem.isChecked = true
-        main_drawer_layout.closeDrawer(GravityCompat.START)
-        return true
     }
 
     override fun onSupportNavigateUp(): Boolean {
