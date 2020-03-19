@@ -11,11 +11,25 @@
         android:label="@string/posts_fragment_label"
         tools:layout="@layout/fragment_posts" />
 
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.briatka.pavol.littlepantry.ui.main.fragments.ProfileFragment"
+        android:label="@string/profile_fragment_label"
+        tools:layout="@layout/fragment_profile"/>
+
     <activity
         android:id="@+id/authActivity"
         android:name="com.briatka.pavol.littlepantry.ui.auth.AuthActivity"
         android:label="@string/auth_activity_graph_label"
         tools:layout="@layout/activity_auth" />
+
+    <action
+        android:id="@+id/action_open_profile"
+        app:destination="@id/profileFragment"
+        app:enterAnim="@anim/slide_in_right"
+        app:exitAnim="@anim/slide_out_left"
+        app:popEnterAnim="@anim/slide_in_left"
+        app:popExitAnim="@anim/slide_out_rigth"/>
 
     <action
         android:id="@+id/action_open_auth_activity"

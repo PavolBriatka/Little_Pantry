@@ -8,7 +8,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/civ_profile_photo"
+        android:id="@+id/civ_profile_photo_header"
         android:layout_width="125dp"
         android:layout_height="125dp"
         android:layout_marginTop="@dimen/medium_margin"
@@ -20,7 +20,8 @@
         app:layout_constraintBottom_toTopOf="@id/tv_header_user_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:transitionName="profile_picture_view"/>
 
     <TextView
         android:id="@+id/tv_header_user_name"
@@ -30,7 +31,7 @@
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="16sp"
-        app:layout_constraintTop_toBottomOf="@id/civ_profile_photo"
+        app:layout_constraintTop_toBottomOf="@id/civ_profile_photo_header"
         tools:text = "John Lenon" />
 
     <TextView
