@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/ml_profile_body"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    app:layoutDescription="@xml/scene_profile_picture"
     tools:context=".ui.main.fragments.ProfileFragment">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/civ_profile_photo"
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="@dimen/large_margin"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_blank_profile"
@@ -18,8 +21,8 @@
         app:civ_border_width="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:transitionName="profile_picture_view"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <LinearLayout
         android:id="@+id/ll_profile_info"
@@ -43,9 +46,9 @@
                 android:id="@+id/et_profile_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:inputType="textPersonName"
                 android:textSize="14sp"
-                android:gravity="center"
                 tools:text="Albus Dumbledore" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -53,4 +56,4 @@
 
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

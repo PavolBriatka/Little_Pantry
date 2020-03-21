@@ -2,7 +2,6 @@ package com.briatka.pavol.littlepantry.ui.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.Toast
@@ -17,6 +16,7 @@ import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.main.adapters.DrawerMenuAdapter
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.FirebaseAuthLiveData
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.MainViewModel
+import com.briatka.pavol.littlepantry.utils.ui.helpers.OnTransitionChangedListener
 import com.briatka.pavol.littlepantry.viewmodels.ViewModelsProviderFactory
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseUser
@@ -28,7 +28,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.drawer_header.*
 import javax.inject.Inject
 
-class MainActivity : DaggerAppCompatActivity(), MotionLayout.TransitionListener {
+class MainActivity : DaggerAppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var mainNavController: NavController
@@ -55,7 +55,7 @@ class MainActivity : DaggerAppCompatActivity(), MotionLayout.TransitionListener 
 
         mainNavController = this.findNavController(R.id.main_nav_host_fragment)
         profileNavController = this.findNavController(R.id.side_nav_host_fragment)
-        ml_main_experiment.setTransitionListener(this)
+        ml_main_experiment.setTransitionListener(createTransitionListener())
 
         connectivitySnackbar = Snackbar.make(
             main_drawer_layout,
@@ -66,6 +66,14 @@ class MainActivity : DaggerAppCompatActivity(), MotionLayout.TransitionListener 
         initDrawer()
         subscribeToUserState()
         subscribeToConnectivityStatus()
+    }
+
+    private fun createTransitionListener(): OnTransitionChangedListener {
+        return object: OnTransitionChangedListener() {
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, progress: Float) {
+                viewModel.transitionProgress.onNext(progress)
+            }
+        }
     }
 
     override fun onStart() {
@@ -125,7 +133,6 @@ class MainActivity : DaggerAppCompatActivity(), MotionLayout.TransitionListener 
             AdapterView.OnItemClickListener { _, _, _, id ->
                 when (id) {
                     0L -> {
-                        //val extras = FragmentNavigatorExtras(civ_profile_photo to "profile_picture_view")
                         mainNavController.navigate(R.id.action_open_profile)
                         main_drawer_layout.closeDrawers()
                     }
@@ -145,22 +152,4 @@ class MainActivity : DaggerAppCompatActivity(), MotionLayout.TransitionListener 
             main_drawer_layout
         )
     }
-
-    override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
-
-    }
-
-    override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
-
-    }
-
-    override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
-        Log.e("PROGRESS", "$p3")
-    }
-
-    override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-
-    }
-
-
 }

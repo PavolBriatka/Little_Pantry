@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/motionLayout2">
+    android:id="@+id/profile_picture_motionLayout">
 
     <Transition
         motion:constraintSetEnd="@+id/end_photo"
         motion:constraintSetStart="@+id/start_photo"
         motion:duration="1000"
         motion:motionInterpolator="linear" >
-
-        <OnSwipe
-            motion:touchAnchorId="@+id/civ_profile_photo"
-            motion:touchAnchorSide="bottom"
-            motion:dragDirection="dragDown" />
     </Transition>
 
     <ConstraintSet android:id="@+id/start_photo">
@@ -23,9 +18,6 @@
             android:layout_height="75dp"
             motion:layout_constraintTop_toTopOf="parent"
             motion:layout_constraintStart_toStartOf="parent">
-            <CustomAttribute
-                motion:attributeName="BackgroundColor"
-                motion:customColorValue="@android:color/transparent" />
         </Constraint>
     </ConstraintSet>
 
@@ -39,9 +31,6 @@
             motion:layout_constraintEnd_toEndOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintTop_toTopOf="parent">
-            <CustomAttribute
-                motion:attributeName="BackgroundColor"
-                motion:customColorValue="@color/lightPrimaryColor" />
         </Constraint>
     </ConstraintSet>
 

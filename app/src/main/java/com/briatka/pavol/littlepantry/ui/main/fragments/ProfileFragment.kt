@@ -1,11 +1,14 @@
 package com.briatka.pavol.littlepantry.ui.main.fragments
 
+import android.animation.Animator
+import android.animation.ValueAnimator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.activityViewModels
-import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.MainViewModel
 import dagger.android.support.DaggerFragment
@@ -19,11 +22,6 @@ class ProfileFragment : DaggerFragment() {
     private val sharedViewModel: MainViewModel by activityViewModels()
     private val disposables = CompositeDisposable()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        sharedElementEnterTransition = TransitionInflater.from(context)
-            .inflateTransition(android.R.transition.move)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +34,7 @@ class ProfileFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
         disposables.addAll(
+            subscribeToTransitionProgress(),
             subscribeToProfilePhoto()
         )
     }
@@ -43,6 +42,14 @@ class ProfileFragment : DaggerFragment() {
     override fun onStop() {
         disposables.clear()
         super.onStop()
+    }
+
+    private fun subscribeToTransitionProgress(): Disposable {
+        return sharedViewModel.transitionProgress.hide()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                ml_profile_body.progress = it
+            }
     }
 
     private fun subscribeToProfilePhoto(): Disposable {

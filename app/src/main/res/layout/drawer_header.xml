@@ -20,8 +20,7 @@
         app:layout_constraintBottom_toTopOf="@id/tv_header_user_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:transitionName="profile_picture_view"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/tv_header_user_name"
