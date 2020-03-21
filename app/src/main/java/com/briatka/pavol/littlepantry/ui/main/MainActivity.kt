@@ -55,7 +55,7 @@ class MainActivity : DaggerAppCompatActivity() {
 
         mainNavController = this.findNavController(R.id.main_nav_host_fragment)
         profileNavController = this.findNavController(R.id.side_nav_host_fragment)
-        ml_main_experiment.setTransitionListener(createTransitionListener())
+        ml_main_activity.setTransitionListener(createTransitionListener())
 
         connectivitySnackbar = Snackbar.make(
             main_drawer_layout,
@@ -114,7 +114,7 @@ class MainActivity : DaggerAppCompatActivity() {
             if (user == null) {
                 mainNavController.navigate(R.id.action_open_auth_activity)
             } else {
-                Toast.makeText(this, "Logged in", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show()
             }
         })
     }

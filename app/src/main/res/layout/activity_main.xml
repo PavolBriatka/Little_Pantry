@@ -9,7 +9,7 @@
     tools:context=".ui.main.MainActivity">
 
     <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/ml_main_experiment"
+        android:id="@+id/ml_main_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
