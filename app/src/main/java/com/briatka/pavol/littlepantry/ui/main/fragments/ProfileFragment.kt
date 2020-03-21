@@ -35,7 +35,8 @@ class ProfileFragment : DaggerFragment() {
         super.onStart()
         disposables.addAll(
             subscribeToTransitionProgress(),
-            subscribeToProfilePhoto()
+            subscribeToProfilePhoto(),
+            subscribeToUserData()
         )
     }
 
@@ -58,6 +59,17 @@ class ProfileFragment : DaggerFragment() {
             .firstElement()
             .subscribe {
                 civ_profile_photo.setImageBitmap(it)
+            }
+    }
+
+    private fun subscribeToUserData(): Disposable {
+        return sharedViewModel.userData.hide()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {userData ->
+                val fullName = "${userData.firstName} ${userData.surname}"
+                et_profile_name.setText(fullName)
+                et_profile_nickname.setText(userData.nickname)
+                et_profile_email_address.setText(userData.email)
             }
     }
 }

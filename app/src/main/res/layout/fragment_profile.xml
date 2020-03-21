@@ -23,37 +23,77 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-
-    <LinearLayout
-        android:id="@+id/ll_profile_info"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_profile_name"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin"
         android:layout_marginTop="@dimen/medium_margin"
-        android:orientation="vertical"
+        android:layout_marginEnd="@dimen/medium_margin"
+        android:paddingBottom="@dimen/medium_margin"
+        app:layout_constraintBottom_toTopOf="@id/tl_profile_nickname"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/civ_profile_photo">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tl_profile_name"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_profile_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/medium_margin"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:enabled="false"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:textSize="14sp"
+            tools:text="Albus Dumbledore" />
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/et_profile_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:inputType="textPersonName"
-                android:textSize="14sp"
-                tools:text="Albus Dumbledore" />
-
-        </com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
 
-    </LinearLayout>
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_profile_nickname"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin"
+        android:paddingBottom="@dimen/medium_margin"
+        app:layout_constraintBottom_toTopOf="@id/et_profile_email_address"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tl_profile_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_profile_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:gravity="center"
+            android:inputType="textPersonName"
+            android:textSize="14sp"
+            tools:text="albie" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tl_profile_email_address"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin"
+        android:layout_marginEnd="@dimen/medium_margin"
+        android:paddingBottom="@dimen/medium_margin"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tl_profile_nickname">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_profile_email_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:gravity="center"
+            android:inputType="textEmailAddress"
+            android:textSize="14sp"
+            tools:text="albie" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

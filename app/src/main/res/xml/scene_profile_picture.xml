@@ -8,6 +8,24 @@
         motion:constraintSetStart="@+id/start_photo"
         motion:duration="1000"
         motion:motionInterpolator="linear" >
+
+        <KeyFrameSet>
+            <KeyPosition
+                motion:keyPositionType="parentRelative"
+                motion:percentX="-1"
+                motion:framePosition="1"
+                motion:motionTarget="@id/tl_profile_name"/>
+            <KeyPosition
+                motion:keyPositionType="parentRelative"
+                motion:percentX="-2"
+                motion:framePosition="1"
+                motion:motionTarget="@id/tl_profile_nickname"/>
+            <KeyPosition
+                motion:keyPositionType="parentRelative"
+                motion:percentX="-3"
+                motion:framePosition="1"
+                motion:motionTarget="@id/tl_profile_email_address"/>
+        </KeyFrameSet>
     </Transition>
 
     <ConstraintSet android:id="@+id/start_photo">
