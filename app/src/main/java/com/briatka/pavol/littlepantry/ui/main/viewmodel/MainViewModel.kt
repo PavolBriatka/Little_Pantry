@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
 import javax.inject.Inject
 
@@ -28,6 +29,7 @@ class MainViewModel @Inject constructor(
     override val userData: BehaviorSubject<UserData> = BehaviorSubject.create()
     override val contactInfoData: BehaviorSubject<UserContactData> = BehaviorSubject.create()
     override val profilePhoto: BehaviorSubject<Bitmap> = BehaviorSubject.create()
+    val transitionProgress: BehaviorSubject<Float> = BehaviorSubject.create()
 
     override fun fetchUserData() {
         firebaseAuth.currentUser?.let { user ->
