@@ -34,7 +34,7 @@
         <Constraint
             android:id="@+id/profile_container"
             android:layout_width="75dp"
-            android:layout_height="87dp"
+            android:layout_height="83dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintStart_toStartOf="parent"
             motion:layout_constraintEnd_toEndOf="parent">
