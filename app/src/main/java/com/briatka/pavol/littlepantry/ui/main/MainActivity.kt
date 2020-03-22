@@ -50,7 +50,7 @@ class MainActivity : DaggerAppCompatActivity() {
         viewModel.fetchUserData()
 
         mainNavController = this.findNavController(R.id.main_nav_host_fragment)
-        profileNavController = this.findNavController(R.id.side_nav_host_fragment)
+        profileNavController = this.findNavController(R.id.profile_nav_host_fragment)
         ml_main_activity.setTransitionListener(createTransitionListener())
 
         connectivitySnackbar = Snackbar.make(

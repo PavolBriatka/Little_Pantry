@@ -61,12 +61,12 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <fragment
-            android:id="@+id/side_nav_host_fragment"
+            android:id="@+id/profile_nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:defaultNavHost="false"
-            app:navGraph="@navigation/side_graph"
+            app:navGraph="@navigation/profile_graph"
             tools:ignore="FragmentTagUsage" />
 
     </com.briatka.pavol.littlepantry.utils.ui.TouchFrameLayout>
