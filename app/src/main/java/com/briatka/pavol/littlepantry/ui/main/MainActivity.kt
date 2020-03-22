@@ -2,9 +2,9 @@ package com.briatka.pavol.littlepantry.ui.main
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.ListView
-import android.widget.Toast
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -50,6 +50,8 @@ class MainActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
         viewModel.fetchUserData()
 
@@ -69,9 +71,11 @@ class MainActivity : DaggerAppCompatActivity() {
     }
 
     private fun createTransitionListener(): OnTransitionChangedListener {
-        return object: OnTransitionChangedListener() {
+        return object : OnTransitionChangedListener() {
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, progress: Float) {
                 viewModel.transitionProgress.onNext(progress)
+                btn_inbox.alpha = 1 - progress
+                btn_my_posts.alpha = 1 - progress
             }
         }
     }
@@ -111,11 +115,9 @@ class MainActivity : DaggerAppCompatActivity() {
 
     private fun subscribeToUserState() {
         firebaseAuthStatus.observe(this, Observer<FirebaseUser> { user ->
-            if (user == null) {
+            if (user == null)
                 mainNavController.navigate(R.id.action_open_auth_activity)
-            } else {
-                Toast.makeText(this, "Logged in", Toast.LENGTH_SHORT).show()
-            }
+
         })
     }
 

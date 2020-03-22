@@ -1,13 +1,9 @@
 package com.briatka.pavol.littlepantry.ui.main.fragments
 
-import android.animation.Animator
-import android.animation.ValueAnimator
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.fragment.app.activityViewModels
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.MainViewModel
@@ -50,6 +46,12 @@ class ProfileFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 ml_profile_body.progress = it
+                if (it >= 0.5 ) {
+                    val mAlpha =  ((it - 0.5) * 2).toFloat()
+                    tl_profile_name.alpha =  mAlpha
+                    tl_profile_nickname.alpha = mAlpha
+                    tl_profile_email_address.alpha = mAlpha
+                }
             }
     }
 
@@ -65,7 +67,7 @@ class ProfileFragment : DaggerFragment() {
     private fun subscribeToUserData(): Disposable {
         return sharedViewModel.userData.hide()
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {userData ->
+            .subscribe { userData ->
                 val fullName = "${userData.firstName} ${userData.surname}"
                 et_profile_name.setText(fullName)
                 et_profile_nickname.setText(userData.nickname)

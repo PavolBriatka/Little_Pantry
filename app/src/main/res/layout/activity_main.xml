@@ -24,12 +24,37 @@
             app:navGraph="@navigation/main_graph"
             tools:ignore="FragmentTagUsage" />
 
+        <LinearLayout
+            android:id="@+id/main_navigation_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            style="?android:attr/buttonBarStyle"
+            android:background="@android:color/white"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <Button
+                android:id="@+id/btn_inbox"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_height="match_parent"
+                android:text="@string/inbox_label"/>
+
+            <Button
+                android:id="@+id/btn_my_posts"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_height="match_parent"
+                android:text="@string/my_posts_label"/>
+
+        </LinearLayout>
+
         <com.briatka.pavol.littlepantry.utils.ui.TouchFrameLayout
             android:id="@+id/profile_container"
             android:layout_width="75dp"
             android:layout_height="75dp"
-            android:layout_marginStart="@dimen/margin_small"
-            android:layout_marginTop="@dimen/margin_small"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -44,21 +69,8 @@
 
         </com.briatka.pavol.littlepantry.utils.ui.TouchFrameLayout>
 
+
     </androidx.constraintlayout.motion.widget.MotionLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ProgressBar
-            android:id="@+id/main_progress_bar"
-            style="@style/Widget.AppCompat.ProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:visibility="gone" />
-
-    </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/main_navigation_view"

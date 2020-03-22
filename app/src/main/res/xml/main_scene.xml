@@ -25,20 +25,19 @@
 
         <OnSwipe
             motion:touchAnchorId="@+id/profile_container"
-            motion:touchAnchorSide="bottom"
-            motion:dragDirection="dragDown" />
+            motion:touchAnchorSide="top"
+            motion:dragDirection="dragUp" />
     </Transition>
 
     <ConstraintSet android:id="@+id/main_start">
 
         <Constraint
             android:id="@+id/profile_container"
-            android:layout_marginTop="@dimen/margin_small"
-            android:layout_marginStart="@dimen/margin_small"
             android:layout_width="75dp"
-            android:layout_height="75dp"
-            motion:layout_constraintTop_toTopOf="parent"
-            motion:layout_constraintStart_toStartOf="parent">
+            android:layout_height="87dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent">
             <CustomAttribute
                 motion:attributeName="BackgroundColor"
                 motion:customColorValue="@android:color/transparent" />
