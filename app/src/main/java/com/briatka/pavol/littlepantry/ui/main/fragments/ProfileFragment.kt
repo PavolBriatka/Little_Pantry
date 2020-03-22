@@ -46,6 +46,8 @@ class ProfileFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 ml_profile_body.progress = it
+                /**Make views visible only after at least half of the fragment is visible
+                 * otherwise the views are "squeezed" in the fragment as it opens.*/
                 if (it >= 0.5 ) {
                     val mAlpha =  ((it - 0.5) * 2).toFloat()
                     tl_profile_name.alpha =  mAlpha

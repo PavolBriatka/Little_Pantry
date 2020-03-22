@@ -1,103 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_drawer_layout"
+    android:id="@+id/ml_main_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    app:layoutDescription="@xml/main_scene"
     tools:context=".ui.main.MainActivity">
 
-    <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/ml_main_activity"
+    <fragment
+        android:id="@+id/main_nav_host_fragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        app:layoutDescription="@xml/main_scene">
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/main_graph"
+        tools:ignore="FragmentTagUsage" />
+
+    <LinearLayout
+        android:id="@+id/main_navigation_bar"
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btn_inbox"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="@string/inbox_label" />
+
+        <!--Keeps the area behind profile avatar responsive to drag movements.
+        Otherwise dragging avatar would not be response because it would be
+        registered as clicks on buttons that are in the background. -->
+        <View
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="50dp"/>
+
+        <Button
+            android:id="@+id/btn_my_posts"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:text="@string/my_posts_label" />
+
+    </LinearLayout>
+
+    <com.briatka.pavol.littlepantry.utils.ui.TouchFrameLayout
+        android:id="@+id/profile_container"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <fragment
-            android:id="@+id/main_nav_host_fragment"
+            android:id="@+id/side_nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/main_graph"
+            app:defaultNavHost="false"
+            app:navGraph="@navigation/side_graph"
             tools:ignore="FragmentTagUsage" />
 
-        <LinearLayout
-            android:id="@+id/main_navigation_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            style="?android:attr/buttonBarStyle"
-            android:background="@android:color/white"
-            app:layout_constraintBottom_toBottomOf="parent">
+    </com.briatka.pavol.littlepantry.utils.ui.TouchFrameLayout>
 
-            <Button
-                android:id="@+id/btn_inbox"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_height="match_parent"
-                android:text="@string/inbox_label"/>
-
-            <Button
-                android:id="@+id/btn_my_posts"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_height="match_parent"
-                android:text="@string/my_posts_label"/>
-
-        </LinearLayout>
-
-        <com.briatka.pavol.littlepantry.utils.ui.TouchFrameLayout
-            android:id="@+id/profile_container"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <fragment
-                android:id="@+id/side_nav_host_fragment"
-                android:name="androidx.navigation.fragment.NavHostFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:defaultNavHost="false"
-                app:navGraph="@navigation/side_graph"
-                tools:ignore="FragmentTagUsage" />
-
-        </com.briatka.pavol.littlepantry.utils.ui.TouchFrameLayout>
-
-
-    </androidx.constraintlayout.motion.widget.MotionLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/main_navigation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <include
-                android:id="@+id/rl_drawer_header"
-                layout="@layout/drawer_header" />
-
-            <ListView
-                android:id="@+id/rl_drawer_menu_items"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/rl_drawer_header"
-                android:divider="@null" />
-
-        </RelativeLayout>
-
-    </com.google.android.material.navigation.NavigationView>
-
-</androidx.drawerlayout.widget.DrawerLayout>
-
+</androidx.constraintlayout.motion.widget.MotionLayout>
 
