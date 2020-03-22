@@ -25,6 +25,7 @@
 
         <OnSwipe
             motion:touchAnchorId="@+id/profile_container"
+            motion:touchRegionId="@+id/profile_container"
             motion:touchAnchorSide="top"
             motion:dragDirection="dragUp" />
     </Transition>
