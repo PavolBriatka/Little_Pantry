@@ -128,13 +128,13 @@ class UserContactInfoFragment : DaggerFragment() {
     }
 
     private fun updateEmailField() {
-        sharedViewModel.userEmail
+        /*sharedViewModel.userEmail
             .observeOn(AndroidSchedulers.mainThread())
             .firstElement()
             .subscribe {
                 et_email_address.setText(it)
                 et_email_address.isEnabled = false
-            }.let { disposables.add(it) }
+            }.let { disposables.add(it) }*/
     }
 
     private fun updatePhoneNumber() {

@@ -4,7 +4,8 @@ import android.graphics.Bitmap
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.briatka.pavol.littlepantry.models.UserData
+import com.briatka.pavol.littlepantry.models.DisplayableUser
+import com.briatka.pavol.littlepantry.models.MandatoryDbUserData
 import com.briatka.pavol.littlepantry.models.UserContactData
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.CONTACT_INFO_PATH
@@ -21,8 +22,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.BiFunction
-import io.reactivex.functions.Function4
 import io.reactivex.functions.Function5
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
@@ -44,28 +43,30 @@ class AuthViewModel @Inject constructor(
     private val disposables = CompositeDisposable()
     val userState = MutableLiveData<UserState>()
 
-    override val userEmail: BehaviorSubject<String> = BehaviorSubject.create()
-    override val userPassword: BehaviorSubject<String> = BehaviorSubject.create()
+    override val displayableUser: BehaviorSubject<DisplayableUser>
+            = BehaviorSubject.createDefault(DisplayableUser())
 
-    override val userFirstName: BehaviorSubject<String> = BehaviorSubject.create()
-    override val userSurname: BehaviorSubject<String> = BehaviorSubject.create()
-    override val userNickname: BehaviorSubject<String> = BehaviorSubject.create()
     override val userProfilePhoto: BehaviorSubject<Bitmap> = BehaviorSubject.create()
-    override val userProfilePhotoState: PublishSubject<ProfilePictureState> = PublishSubject.create()
     override val userPhoneNumber: BehaviorSubject<String> = BehaviorSubject.createDefault("")
     override val userAddressLine: BehaviorSubject<String> = BehaviorSubject.create()
     override val userCity: BehaviorSubject<String> = BehaviorSubject.create()
     override val userZipCode: BehaviorSubject<String> = BehaviorSubject.create()
     override val userCountry: BehaviorSubject<String> = BehaviorSubject.create()
+
+    override val userProfilePhotoState: PublishSubject<ProfilePictureState> = PublishSubject.create()
+    /**
+     * The clicks to take a picture or upload image from gallery are registered in a Fragment
+     * but the permissions to access Camera/Gallery are handled in the Activity and thus we can
+     * use this Subject to notify the Fragment from Activity when the permissions are granted*/
     override val permissionIntentDispatcher: PublishSubject<Int> = PublishSubject.create()
 
 
     override fun startUserVerification(flag: String) {
         userState.postValue(AuthInProgress(flag))
-        userEmail.hide()
+        displayableUser
             .firstElement()
             .subscribe {
-                verifyUserEmail(it, flag)
+                verifyUserEmail(it.uEmail, flag)
             }.let { disposables.add(it) }
 
 
@@ -104,13 +105,10 @@ class AuthViewModel @Inject constructor(
 
         userState.postValue(StartUserRegistration)
 
-        Observable.combineLatest(userEmail.hide(), userPassword.hide(),
-            BiFunction<String, String, Pair<String, String>> { email, password ->
-                Pair(email, password)
-            })
+        displayableUser
             .firstElement()
-            .subscribe { userCredentials ->
-                registerNewUser(userCredentials.first, userCredentials.second)
+            .subscribe { user ->
+                registerNewUser(user.uEmail, user.uPassword)
             }.let { disposables.add(it) }
     }
 
@@ -131,13 +129,10 @@ class AuthViewModel @Inject constructor(
         firebaseAuth.currentUser?.uid?.let { userId ->
             val dbUserReference = firestoreDb.collection(USERS_PATH).document(userId)
 
-            Observable.combineLatest(userFirstName.hide(),
-                userSurname.hide(),
-                userNickname.hide(),
-                userEmail.hide(),
-                Function4<String, String, String, String, UserData> { firstName, surname, nickname, email ->
-                    UserData(firstName, surname, nickname, email)
-                })
+            displayableUser
+                .map { user ->
+                    MandatoryDbUserData(user.uFirstName, user.uSurname, user.uNickname, user.uEmail)
+                }
                 .firstElement()
                 .subscribe { newUser ->
                     dbUserReference.set(newUser)
@@ -223,13 +218,10 @@ class AuthViewModel @Inject constructor(
     }
 
     override fun startUserLogin() {
-        Observable.combineLatest(userEmail.hide(), userPassword.hide(),
-            BiFunction<String, String, Pair<String, String>> { email, password ->
-                Pair(email, password)
-            })
+        displayableUser
             .firstElement()
-            .subscribe { userCredentials ->
-                loginUser(userCredentials.first, userCredentials.second)
+            .subscribe { user ->
+                loginUser(user.uEmail, user.uPassword)
             }.let { disposables.add(it) }
     }
 

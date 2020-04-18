@@ -2,14 +2,16 @@ package com.briatka.pavol.littlepantry.ui.auth.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.briatka.pavol.littlepantry.R
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
+import com.briatka.pavol.littlepantry.models.DisplayableUser
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState.*
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_EMAIL_ERROR
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_FLAG
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.LOGIN_PASSWORD_ERROR
@@ -20,7 +22,10 @@ import com.google.android.material.snackbar.Snackbar
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import dagger.android.support.DaggerFragment
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Function3
 import kotlinx.android.synthetic.main.fragment_login.*
 
 
@@ -42,8 +47,18 @@ class LoginFragment : DaggerFragment() {
         subscribeObserver()
         subscribeToLoginButton()
         subscribeToRegisterButton()
-        subscribeToLoginEmailField()
-        subscribeToLoginPasswordField()
+        subscribeToCredentialsFields()
+        userEmits()
+    }
+
+    override fun onStop() {
+        disposables.clear()
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        disposables.dispose()
+        super.onDestroy()
     }
 
     private fun subscribeObserver() {
@@ -110,24 +125,37 @@ class LoginFragment : DaggerFragment() {
             }.let { disposables.add(it) }
     }
 
-    private fun subscribeToLoginEmailField() {
-        et_email_address.textChanges()
-            .map {
-                it.toString().trim()
-            }
+    private fun userEmits() {
+        sharedViewModel.displayableUser
+            .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                sharedViewModel.userEmail.onNext(it)
-                tl_email_address.error = null
+                Log.e("uFirstName", "${it.uFirstName}")
+                Log.e("uSurname", "${it.uSurname}")
+                Log.e("uNickname", "${it.uNickname}")
+                Log.e("uEmail", "${it.uEmail}")
+                Log.e("uPassword", "${it.uPassword}")
+
+
             }.let { disposables.add(it) }
     }
 
-    private fun subscribeToLoginPasswordField() {
-        et_login_password.textChanges()
-            .map {
-                it.toString().trim()
+    private fun subscribeToCredentialsFields() {
+        Observable.combineLatest(sharedViewModel.displayableUser,
+            et_email_address.textChanges(),
+            et_login_password.textChanges(),
+            Function3<DisplayableUser, CharSequence, CharSequence, DisplayableUser> { user, email, password ->
+                user.copy(
+                    uEmail = email.toString(),
+                    uPassword = password.toString()
+                )
+            })
+            .buffer(2)
+            .filter { lastTwoEmissions ->
+                lastTwoEmissions[0] != lastTwoEmissions[1]
             }
-            .subscribe {
-                sharedViewModel.userPassword.onNext(it)
+            .subscribe { unequalEmissions ->
+                sharedViewModel.displayableUser.onNext(unequalEmissions[1])
+                tl_email_address.error = null
                 tl_login_password.error = null
             }.let { disposables.add(it) }
     }

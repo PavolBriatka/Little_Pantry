@@ -6,7 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.briatka.pavol.littlepantry.models.UserContactData
-import com.briatka.pavol.littlepantry.models.UserData
+import com.briatka.pavol.littlepantry.models.MandatoryDbUserData
 import com.briatka.pavol.littlepantry.utils.AuthConstants
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.CONTACT_INFO_PATH
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.PROFILE_PHOTO_REFERENCE_PATH
@@ -26,7 +26,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel(),
     ViewModelContract {
 
-    override val userData: BehaviorSubject<UserData> = BehaviorSubject.create()
+    override val userData: BehaviorSubject<MandatoryDbUserData> = BehaviorSubject.create()
     override val contactInfoData: BehaviorSubject<UserContactData> = BehaviorSubject.create()
     override val profilePhoto: BehaviorSubject<Bitmap> = BehaviorSubject.create()
     val transitionProgress: BehaviorSubject<Float> = BehaviorSubject.create()
@@ -77,7 +77,7 @@ class MainViewModel @Inject constructor(
     private fun fetchBasicData(userDataRef: DocumentReference) {
         userDataRef.get()
             .addOnSuccessListener {
-                it.toObject(UserData::class.java)?.let { data ->
+                it.toObject(MandatoryDbUserData::class.java)?.let { data ->
                     userData.onNext(data)
                 }
 

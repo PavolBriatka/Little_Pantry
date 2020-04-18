@@ -4,6 +4,7 @@ package com.briatka.pavol.littlepantry.ui.auth.fragments
 import android.animation.ValueAnimator
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import android.view.animation.AnimationUtils
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import com.briatka.pavol.littlepantry.R
+import com.briatka.pavol.littlepantry.models.DisplayableUser
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.HEADER_SCROLL_DOWN_COEFFICIENT
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.HEADER_SCROLL_UP_COEFFICIENT
@@ -18,8 +20,10 @@ import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.shuhart.stepview.StepView
 import dagger.android.support.DaggerFragment
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Function5
 import kotlinx.android.synthetic.main.fragment_registration_form.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.util.concurrent.TimeUnit
@@ -33,6 +37,7 @@ class RegistrationFormFragment : DaggerFragment() {
     
     private lateinit var headerView: StepView
     private lateinit var mContext: Context
+
     @Inject
     lateinit var steps: List<String>
 
@@ -76,16 +81,10 @@ class RegistrationFormFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
-        updateFirstNameField()
-        updateSurnameField()
-        updateUserNameField()
-        updateEmailField()
-        updatePasswordField()
-        subscribeToFirstNameField()
-        subscribeToSurnameField()
-        subscribeToNickNameField()
+        updateFormFields()
+        subscribeToFormFields()
         subscribeToRegisterButton()
-        subscribeToPasswordField()
+        userEmits()
     }
 
     override fun onStop() {
@@ -98,82 +97,58 @@ class RegistrationFormFragment : DaggerFragment() {
         super.onDestroy()
     }
 
-    private fun updateFirstNameField() {
-        sharedViewModel.userFirstName
+    private fun updateFormFields() {
+        sharedViewModel.displayableUser
             .observeOn(AndroidSchedulers.mainThread())
             .firstElement()
             .subscribe {
-                et_user_first_name.setText(it)
-            }.let { disposables.add(it) }
-    }
-
-    private fun updateSurnameField() {
-        sharedViewModel.userSurname
-            .observeOn(AndroidSchedulers.mainThread())
-            .firstElement()
-            .subscribe {
-                et_user_surname.setText(it)
-            }.let { disposables.add(it) }
-    }
-
-    private fun updateUserNameField() {
-        sharedViewModel.userNickname
-            .observeOn(AndroidSchedulers.mainThread())
-            .firstElement()
-            .subscribe {
-                et_user_nickname.setText(it)
-            }.let { disposables.add(it) }
-    }
-
-    private fun updateEmailField() {
-        sharedViewModel.userEmail
-            .observeOn(AndroidSchedulers.mainThread())
-            .firstElement()
-            .subscribe {
-                et_email_address.setText(it)
+                et_user_first_name.setText(it.uFirstName)
+                et_user_surname.setText(it.uSurname)
+                et_user_nickname.setText(it.uNickname)
+                et_email_address.setText(it.uEmail)
                 et_email_address.isEnabled = false
+                et_register_password.setText(it.uPassword)
             }.let { disposables.add(it) }
     }
 
-    private fun updatePasswordField() {
-        sharedViewModel.userPassword
+    private fun userEmits() {
+        sharedViewModel.displayableUser
             .observeOn(AndroidSchedulers.mainThread())
-            .firstElement()
             .subscribe {
-                et_register_password.setText(it)
+                Log.e("uFirstName", "${it.uFirstName}")
+                Log.e("uSurname", "${it.uSurname}")
+                Log.e("uNickname", "${it.uNickname}")
+                Log.e("uEmail", "${it.uEmail}")
+                Log.e("uPassword", "${it.uPassword}")
+
+
             }.let { disposables.add(it) }
     }
 
-    private fun subscribeToFirstNameField() {
-        et_user_first_name.textChanges()
-            .map {
-                it.trim().toString()
+    private fun subscribeToFormFields() {
+        Observable.combineLatest(sharedViewModel.displayableUser,
+            et_user_first_name.textChanges(),
+            et_user_surname.textChanges(),
+            et_user_nickname.textChanges(),
+            et_register_password.textChanges(),
+            Function5<DisplayableUser, CharSequence, CharSequence, CharSequence, CharSequence, DisplayableUser> { user, firstName, surname, nickname, password ->
+                user.copy(
+                    uFirstName = firstName.toString(),
+                    uSurname = surname.toString(),
+                    uNickname = nickname.toString(),
+                    uPassword = password.toString()
+                )
+            })
+            /* Buffer to accumulate values that need to be compared in filter().
+            * Otherwise, this would create an infinite loop of user updates
+            * that would end the world as we know it!!!*/
+            .buffer(2)
+            .filter { lastTwoEmissions ->
+                lastTwoEmissions[0] != lastTwoEmissions[1]
             }
-            .subscribe(sharedViewModel.userFirstName::onNext).let { disposables.add(it) }
-    }
-
-    private fun subscribeToSurnameField() {
-        et_user_surname.textChanges()
-            .map {
-                it.trim().toString()
-            }
-            .subscribe(sharedViewModel.userSurname::onNext).let { disposables.add(it) }
-    }
-
-    private fun subscribeToNickNameField() {
-        et_user_nickname.textChanges()
-            .map {
-                it.trim().toString()
-            }
-            .subscribe(sharedViewModel.userNickname::onNext).let { disposables.add(it) }
-    }
-
-    private fun subscribeToPasswordField() {
-        et_register_password.textChanges()
-            .map {
-                it.trim().toString()
-            }
-            .subscribe(sharedViewModel.userPassword::onNext).let { disposables.add(it) }
+            .subscribe { unequalEmissions ->
+                sharedViewModel.displayableUser.onNext(unequalEmissions[1])
+            }.let { disposables.add(it) }
     }
 
     private fun subscribeToRegisterButton() {
