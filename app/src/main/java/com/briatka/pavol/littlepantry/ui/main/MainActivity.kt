@@ -42,12 +42,12 @@ class MainActivity : DaggerAppCompatActivity() {
 
         /**The app focuses on the edit text in Profile fragment when it starts
          * and opens the keyboard. Since the fragment is neither fully visible nor in the edit mode
-         * this is an undesirable behaviour that is prevented by keeping keyboard closed on start.
+         * it is prevented by keeping keyboard closed on start.
          * */
         this.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
 
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainViewModel::class.java)
-        viewModel.fetchUserData()
+        //viewModel.fetchUserData()
 
         mainNavController = this.findNavController(R.id.main_nav_host_fragment)
         profileNavController = this.findNavController(R.id.profile_nav_host_fragment)
