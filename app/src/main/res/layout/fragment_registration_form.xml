@@ -14,159 +14,159 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-    <com.shuhart.stepview.StepView
-        android:id="@+id/sv_registration_header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/registration_header_height"
-        android:layout_gravity="top"
-        android:background="@android:color/white"
-        android:paddingTop="48dp"
-        android:paddingStart="@dimen/medium_margin"
-        android:paddingEnd="@dimen/medium_margin"
-        android:paddingBottom="48dp"
-        android:transitionName="header_step_view"
-        app:layout_constraintTop_toTopOf="parent"
-        app:sv_animationDuration="300"
-        app:sv_animationType="All"
-        app:sv_doneCircleColor="@color/colorPrimary"
-        app:sv_doneCircleRadius="12dp"
-        app:sv_doneStepLineColor="@color/colorPrimary"
-        app:sv_doneStepMarkColor="@android:color/white"
-        app:sv_doneTextColor="@color/grey"
-        app:sv_nextStepCircleEnabled="true"
-        app:sv_nextStepLineColor="@color/grey"
-        app:sv_nextTextColor="@color/grey"
-        app:sv_selectedCircleColor="@color/colorPrimary"
-        app:sv_selectedCircleRadius="12dp"
-        app:sv_selectedStepNumberColor="@android:color/white"
-        app:sv_selectedTextColor="@color/colorPrimary"
-        app:sv_stepLineWidth="2dp"
-        app:sv_stepNumberTextSize="12sp"
-        app:sv_stepPadding="4dp"
-        app:sv_stepViewStyle="@style/StepView"
-        app:sv_stepsNumber="3"
-        android:elevation="4dp"/>
-
-    <ScrollView
-        android:id="@+id/sv_registration_form"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:overScrollMode="never"
-        android:background="@android:color/white"
-        android:layout_marginBottom="@dimen/extra_large_margin"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/cl_registration_form"
+        <com.shuhart.stepview.StepView
+            android:id="@+id/sv_registration_header"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/registration_header_height"
+            android:layout_gravity="top"
+            android:background="@android:color/white"
+            android:elevation="4dp"
+            android:paddingStart="@dimen/medium_margin"
+            android:paddingTop="48dp"
+            android:paddingEnd="@dimen/medium_margin"
+            android:paddingBottom="48dp"
+            android:transitionName="header_step_view"
+            app:layout_constraintTop_toTopOf="parent"
+            app:sv_animationDuration="300"
+            app:sv_animationType="All"
+            app:sv_doneCircleColor="@color/colorPrimary"
+            app:sv_doneCircleRadius="12dp"
+            app:sv_doneStepLineColor="@color/colorPrimary"
+            app:sv_doneStepMarkColor="@android:color/white"
+            app:sv_doneTextColor="@color/grey"
+            app:sv_nextStepCircleEnabled="true"
+            app:sv_nextStepLineColor="@color/grey"
+            app:sv_nextTextColor="@color/grey"
+            app:sv_selectedCircleColor="@color/colorPrimary"
+            app:sv_selectedCircleRadius="12dp"
+            app:sv_selectedStepNumberColor="@android:color/white"
+            app:sv_selectedTextColor="@color/colorPrimary"
+            app:sv_stepLineWidth="2dp"
+            app:sv_stepNumberTextSize="12sp"
+            app:sv_stepPadding="4dp"
+            app:sv_stepViewStyle="@style/StepView"
+            app:sv_stepsNumber="3" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_user_first_name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        <ScrollView
+            android:id="@+id/sv_registration_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/extra_large_margin"
+            android:background="@android:color/white"
+            android:overScrollMode="never"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_registration_form"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/medium_margin"
-                android:hint="@string/hint_first_name"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_user_first_name"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tl_user_first_name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName|textCapWords"
-                    android:textSize="14sp"
-                    tools:text="Pavol" />
+                    android:layout_margin="@dimen/medium_margin"
+                    android:hint="@string/hint_first_name"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_user_first_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"
+                        android:textSize="14sp"
+                        tools:text="Pavol" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_user_surname"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/medium_margin"
-                android:hint="@string/hint_surname"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tl_user_first_name">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_user_surname"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tl_user_surname"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName|textCapWords"
-                    android:textSize="14sp"
-                    tools:text="Briatka" />
+                    android:layout_margin="@dimen/medium_margin"
+                    android:hint="@string/hint_surname"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tl_user_first_name">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_user_surname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"
+                        android:textSize="14sp"
+                        tools:text="Briatka" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_user_nickname"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/medium_margin"
-                android:hint="@string/hint_username"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tl_user_surname">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_user_nickname"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tl_user_nickname"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:textSize="14sp"
-                    tools:text="pavo.bri90" />
+                    android:layout_margin="@dimen/medium_margin"
+                    android:hint="@string/hint_username"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tl_user_surname">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_user_nickname"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textSize="14sp"
+                        tools:text="pavo.bri90" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_email_address"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/medium_margin"
-                android:hint="@string/hint_email"
-                app:layout_constraintTop_toBottomOf="@id/tl_user_nickname">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_email_address"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tl_email_address"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    tools:text="jane.doe@yahoo.co.uk" />
+                    android:layout_margin="@dimen/medium_margin"
+                    android:hint="@string/hint_email"
+                    app:layout_constraintTop_toBottomOf="@id/tl_user_nickname">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_email_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        tools:text="jane.doe@yahoo.co.uk" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/tl_register_password"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/medium_margin"
-                android:hint="@string/hint_password"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tl_email_address"
-                app:passwordToggleEnabled="true">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_register_password"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tl_register_password"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword"
-                    android:textSize="14sp"
-                    tools:text="Ni@HB2211" />
+                    android:layout_margin="@dimen/medium_margin"
+                    android:hint="@string/hint_password"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tl_email_address"
+                    app:passwordToggleEnabled="true">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_register_password"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textSize="14sp"
+                        tools:text="Ni@HB2211" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
-    </ScrollView>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
 
     </LinearLayout>
 

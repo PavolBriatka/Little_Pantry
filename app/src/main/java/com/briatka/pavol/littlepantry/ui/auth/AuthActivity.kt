@@ -103,12 +103,6 @@ class AuthActivity : DaggerAppCompatActivity() {
                      * the device (allowed from API >= 26) or at least country code of SIM card. To access
                      * either of the information we need user's permission to READ PHONE STATE */
                     checkPermissions()
-                    //Prepare extras for shared element
-                    val extras = FragmentNavigatorExtras(sv_registration_header to "header_step_view")
-                    //Trigger navigation to next fragment
-                    mainNavController.navigate(R.id.action_register_user_contact_info, null, null, extras)
-                    //Launch animation to "slide out" the loading screen as the fragment slides in
-                    loadingScreenSwitch()
                 }
                 RegistrationFinalized -> {
                     /**
@@ -136,6 +130,15 @@ class AuthActivity : DaggerAppCompatActivity() {
         })
     }
 
+    private fun launchContactInfoFragment(){
+        //Prepare extras for shared element
+        val extras = FragmentNavigatorExtras(sv_registration_header to "header_step_view")
+        //Trigger navigation to next fragment
+        mainNavController.navigate(R.id.action_register_user_contact_info, null, null, extras)
+        //Launch animation to "slide out" the loading screen as the fragment slides in
+        loadingScreenSwitch()
+    }
+
     private fun loadingScreenSwitch() {
         val offset = -(resources.getDimensionPixelSize(R.dimen.offset_y).toFloat())
         val interpolator =
@@ -155,6 +158,7 @@ class AuthActivity : DaggerAppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.READ_PHONE_STATE), REQUEST_PHONE_STATE)
         } else {
             if (Build.VERSION.SDK_INT >= 26) setPhoneNumber() else setPhoneCode()
+            launchContactInfoFragment()
         }
     }
 
@@ -166,14 +170,14 @@ class AuthActivity : DaggerAppCompatActivity() {
 
             if (simCountry != null && simCountry.length == 2) { // SIM country code is available
                  simCountry = simCountry.toLowerCase(Locale.US)
-                 viewModel.userPhoneNumber.onNext(countryHelper.getPhoneCodeFromCountryCode(simCountry))
-                 viewModel.userCountry.onNext(countryHelper.getCountryFromCountryCode(simCountry))
+                 viewModel.updateUserPhoneNumber(countryHelper.getPhoneCodeFromCountryCode(simCountry))
+                 viewModel.updateUserCountry(countryHelper.getCountryFromCountryCode(simCountry))
             } else if (telephonyManager.phoneType != TelephonyManager.PHONE_TYPE_CDMA) { // device is not 3G (would be unreliable)
 
                 val networkCountry = telephonyManager.networkCountryIso
                 if (networkCountry != null && networkCountry.length == 2) { // network country code is available
-                     viewModel.userPhoneNumber.onNext(countryHelper.getPhoneCodeFromCountryCode(networkCountry.toLowerCase(Locale.US)))
-                     viewModel.userCountry.onNext(countryHelper.getCountryFromCountryCode(simCountry))
+                     viewModel.updateUserPhoneNumber(countryHelper.getPhoneCodeFromCountryCode(networkCountry.toLowerCase(Locale.US)))
+                     viewModel.updateUserCountry(countryHelper.getCountryFromCountryCode(simCountry))
                 }
             }
         } catch (e: Exception) {
@@ -190,10 +194,10 @@ class AuthActivity : DaggerAppCompatActivity() {
             var simCountry = telephonyManager.simCountryIso
 
             if (phoneNumber != null) {
-                viewModel.userPhoneNumber.onNext("+$phoneNumber")
+                viewModel.updateUserPhoneNumber("+$phoneNumber")
                 if (simCountry != null) {
                     simCountry = simCountry.toLowerCase(Locale.US)
-                    viewModel.userCountry.onNext(countryHelper.getCountryFromCountryCode(simCountry))
+                    viewModel.updateUserCountry(countryHelper.getCountryFromCountryCode(simCountry))
                 }
             } else {
                 //If we cannot get the whole phone number we can try to set at least the country phone code
@@ -213,6 +217,10 @@ class AuthActivity : DaggerAppCompatActivity() {
             REQUEST_PHONE_STATE -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (Build.VERSION.SDK_INT >= 26) setPhoneNumber() else setPhoneCode()
+                    launchContactInfoFragment()
+                } else {
+                    //Launch fragment anyway - the country and phone number will be empty though
+                    launchContactInfoFragment()
                 }
             }
             PERMISSION_REQUEST_CAMERA -> if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) dispatchTakePictureIntent()

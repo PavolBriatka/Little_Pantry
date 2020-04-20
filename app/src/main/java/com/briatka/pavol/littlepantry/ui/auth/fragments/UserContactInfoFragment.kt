@@ -12,14 +12,17 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
+import com.briatka.pavol.littlepantry.models.DisplayableUser
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.utils.AuthConstants
 import com.jakewharton.rxbinding3.view.clicks
 import com.jakewharton.rxbinding3.widget.textChanges
 import com.shuhart.stepview.StepView
 import dagger.android.support.DaggerFragment
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.functions.Function6
 import kotlinx.android.synthetic.main.fragment_user_contact_info.*
 import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
 import java.util.concurrent.TimeUnit
@@ -92,28 +95,21 @@ class UserContactInfoFragment : DaggerFragment() {
 
     private fun animateHeader(scrollUp: Boolean) {
         if (scrollUp) {
-            val headerAnim = provideHeaderScrollAnimation(AuthConstants.HEADER_SCROLL_UP_COEFFICIENT)
+            val headerAnim =
+                provideHeaderScrollAnimation(AuthConstants.HEADER_SCROLL_UP_COEFFICIENT)
             headerAnim.start()
 
         } else {
-            val headerAnim = provideHeaderScrollAnimation(AuthConstants.HEADER_SCROLL_DOWN_COEFFICIENT)
+            val headerAnim =
+                provideHeaderScrollAnimation(AuthConstants.HEADER_SCROLL_DOWN_COEFFICIENT)
             headerAnim.start()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        updateEmailField()
-        updatePhoneNumber()
-        updateAddressField()
-        updateCity()
-        updateZipCode()
-        updateCountry()
-        phoneNumberSubscription()
-        addressSubscription()
-        citySubscription()
-        zipCodeSubscription()
-        countrySubscription()
+        updateFormFields()
+        formFieldsSubscription()
         subscribeToUpdateInfoButton()
     }
 
@@ -127,107 +123,52 @@ class UserContactInfoFragment : DaggerFragment() {
         super.onDestroy()
     }
 
-    private fun updateEmailField() {
-        /*sharedViewModel.userEmail
+    private fun updateFormFields() {
+        sharedViewModel.displayableUser.hide()
             .observeOn(AndroidSchedulers.mainThread())
             .firstElement()
             .subscribe {
-                et_email_address.setText(it)
+                //Set email
+                et_email_address.setText(it.uEmail)
                 et_email_address.isEnabled = false
-            }.let { disposables.add(it) }*/
-    }
+                //Set phone number
+                et_phone_number.setText(it.uPhoneNumber)
+                //Set address
+                et_address_line.setText(it.uAddressLine)
+                //Set city
+                et_city.setText(it.uCity)
+                //Set zip code
+                et_zip_code.setText(it.uZipCode)
+                //Set country
+                et_country.setText(it.uCountry)
 
-    private fun updatePhoneNumber() {
-        sharedViewModel.userPhoneNumber
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if (et_phone_number.text.toString() != it) {
-                    et_phone_number.tag = "SET"
-                    et_phone_number.setText(it)
-                }
-            }.let { disposables.add(it) }
-    }
-    private fun updateAddressField() {
-        sharedViewModel.userAddressLine
-            .observeOn(AndroidSchedulers.mainThread())
-            .firstElement()
-            .subscribe {
-                et_address_line.setText(it)
             }.let { disposables.add(it) }
     }
 
-    private fun updateCity() {
-        sharedViewModel.userCity
-            .observeOn(AndroidSchedulers.mainThread())
-            .firstElement()
-            .subscribe {
-                et_city.setText(it)
-            }.let { disposables.add(it) }
-    }
+    private fun formFieldsSubscription() {
+        Observable.combineLatest(sharedViewModel.displayableUser.hide(),
+            et_phone_number.textChanges(),
+            et_address_line.textChanges(),
+            et_city.textChanges(),
+            et_zip_code.textChanges(),
+            et_country.textChanges(),
+            Function6<DisplayableUser, CharSequence, CharSequence, CharSequence, CharSequence, CharSequence, DisplayableUser> {
+                    user, phoneNumber, address, city, zipCode, country ->
 
-    private fun updateZipCode() {
-        sharedViewModel.userZipCode
-            .observeOn(AndroidSchedulers.mainThread())
-            .firstElement()
-            .subscribe {
-                et_zip_code.setText(it)
-            }.let { disposables.add(it) }
-    }
-
-    private fun updateCountry() {
-        sharedViewModel.userCountry
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if (et_country.text.toString() != it) {
-                    et_country.tag = "SET"
-                    et_country.setText(it)
-                }
-            }.let { disposables.add(it) }
-    }
-
-    private fun phoneNumberSubscription() {
-        et_phone_number.textChanges()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if (et_phone_number.tag == null) {
-                    sharedViewModel.userPhoneNumber.onNext("$it")
-                }
-                et_phone_number.tag = null
-            }.let { disposables.add(it) }
-    }
-
-    private fun addressSubscription() {
-        et_address_line.textChanges()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                sharedViewModel.userAddressLine.onNext("$it")
-            }.let { disposables.add(it) }
-    }
-
-    private fun citySubscription() {
-        et_city.textChanges()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                sharedViewModel.userCity.onNext("$it")
-            }.let { disposables.add(it) }
-    }
-
-    private fun zipCodeSubscription() {
-        et_zip_code.textChanges()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                sharedViewModel.userZipCode.onNext("$it")
-            }.let { disposables.add(it) }
-    }
-
-    private fun countrySubscription() {
-        et_country.textChanges()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe {
-                if (et_country.tag == null) {
-                    sharedViewModel.userCountry.onNext("$it")
-                }
-                et_country.tag = null
+                user.copy(
+                    uPhoneNumber = phoneNumber.toString(),
+                    uAddressLine = address.toString(),
+                    uCity = city.toString(),
+                    uZipCode = zipCode.toString(),
+                    uCountry = country.toString()
+                    )
+            })
+            .buffer(2)
+            .filter { lastTwoEmissions ->
+                lastTwoEmissions[0] != lastTwoEmissions[1]
+            }
+            .subscribe {validEmissions ->
+                sharedViewModel.displayableUser.onNext(validEmissions[1])
             }.let { disposables.add(it) }
     }
 
@@ -237,12 +178,12 @@ class UserContactInfoFragment : DaggerFragment() {
             .throttleFirst(1000, TimeUnit.MILLISECONDS)
             .subscribe {
                 sharedViewModel.finishRegistration()
-            }. let { disposables.add(it) }
+            }.let { disposables.add(it) }
     }
 
     //region Animation functions
     private fun animateViewsIn(view: View) {
-        val root = view.findViewById<ConstraintLayout>(R.id.cl_root)
+        val root = view.findViewById<ConstraintLayout>(R.id.cl_contact_info_form)
         val count = root.childCount
         var offset = resources.getDimensionPixelSize(R.dimen.offset_y).toFloat()
         val interpolator =

@@ -7,16 +7,13 @@ import io.reactivex.subjects.PublishSubject
 
 interface ViewModelContract {
 
-    val userPhoneNumber: BehaviorSubject<String>
-    val userAddressLine: BehaviorSubject<String>
-    val userCity: BehaviorSubject<String>
-    val userZipCode: BehaviorSubject<String>
-    val userCountry: BehaviorSubject<String>
-
     val displayableUser: BehaviorSubject<DisplayableUser>
 
     val userProfilePhotoState: PublishSubject<ProfilePictureState>
     val permissionIntentDispatcher: PublishSubject<Int>
+
+    fun updateUserPhoneNumber(phoneNumber: String)
+    fun updateUserCountry(country: String)
 
     fun startUserVerification(flag: String)
     fun startUserRegistration()

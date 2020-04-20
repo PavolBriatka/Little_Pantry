@@ -20,9 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.functions.Function5
 import io.reactivex.subjects.BehaviorSubject
 import io.reactivex.subjects.PublishSubject
 import java.io.ByteArrayOutputStream
@@ -45,12 +43,6 @@ class AuthViewModel @Inject constructor(
 
     override val displayableUser: BehaviorSubject<DisplayableUser>
             = BehaviorSubject.createDefault(DisplayableUser())
-
-    override val userPhoneNumber: BehaviorSubject<String> = BehaviorSubject.createDefault("")
-    override val userAddressLine: BehaviorSubject<String> = BehaviorSubject.create()
-    override val userCity: BehaviorSubject<String> = BehaviorSubject.create()
-    override val userZipCode: BehaviorSubject<String> = BehaviorSubject.create()
-    override val userCountry: BehaviorSubject<String> = BehaviorSubject.create()
 
     override val userProfilePhotoState: PublishSubject<ProfilePictureState> = PublishSubject.create()
     /**
@@ -149,6 +141,22 @@ class AuthViewModel @Inject constructor(
         }.dispose()
     }
 
+    override fun updateUserPhoneNumber(phoneNumber: String) {
+        displayableUser
+            .firstElement()
+            .subscribe { user ->
+                displayableUser.onNext(user.copy(uPhoneNumber = phoneNumber))
+            }.dispose()
+    }
+
+    override fun updateUserCountry(country: String) {
+        displayableUser
+            .firstElement()
+            .subscribe { user ->
+                displayableUser.onNext(user.copy(uCountry = country))
+            }.dispose()
+    }
+
     override fun uploadUserProfilePicture() {
         userState.postValue(UploadUserProfilePicture)
 
@@ -209,16 +217,17 @@ class AuthViewModel @Inject constructor(
                 firestoreDb.collection(USERS_PATH).document(userId).collection(CONTACT_INFO_PATH)
                     .document(userId)
 
-            Observable.combineLatest(userPhoneNumber.hide(),
-                userAddressLine.hide(),
-                userCity.hide(),
-                userZipCode.hide(),
-                userCountry.hide(),
-                Function5<String, String, String, String, String, UserContactData> { phoneNo, addressLine, city, zipCode, country ->
-                    UserContactData(phoneNo, addressLine, city, zipCode, country)
-                })
+            displayableUser
+                .hide()
                 .firstElement()
-                .subscribe { contactData ->
+                .subscribe { user ->
+                    val contactData = UserContactData(
+                        user.uPhoneNumber,
+                        user.uAddressLine,
+                        user.uCity,
+                        user.uZipCode,
+                        user.uCountry)
+
                     dbReference.set(contactData)
                         .addOnSuccessListener {
                             userState.postValue(RegistrationFinalized)
