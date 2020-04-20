@@ -46,7 +46,6 @@ class AuthViewModel @Inject constructor(
     override val displayableUser: BehaviorSubject<DisplayableUser>
             = BehaviorSubject.createDefault(DisplayableUser())
 
-    override val userProfilePhoto: BehaviorSubject<Bitmap> = BehaviorSubject.create()
     override val userPhoneNumber: BehaviorSubject<String> = BehaviorSubject.createDefault("")
     override val userAddressLine: BehaviorSubject<String> = BehaviorSubject.create()
     override val userCity: BehaviorSubject<String> = BehaviorSubject.create()
@@ -142,27 +141,44 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    override fun updateUserProfilePicture(newPicture: Bitmap) {
+        displayableUser
+        .firstElement()
+        .subscribe { user ->
+            displayableUser.onNext(user.copy(uProfilePhoto = newPicture))
+        }.dispose()
+    }
+
     override fun uploadUserProfilePicture() {
         userState.postValue(UploadUserProfilePicture)
 
         firebaseAuth.currentUser?.uid?.let { uid ->
-            userProfilePhoto.hide()
-                .map {
-                    preparePicture(it)
-                }
+            displayableUser.hide()
                 .firstElement()
-                .subscribe { pictureByteArray ->
+                .subscribe { user ->
 
-                    val fileName = "${System.currentTimeMillis()}.bmp"
-                    val storageReference = firebaseStorage.reference.child("$uid/profile_photo/$fileName")
-                    storageReference.putBytes(pictureByteArray)
-                        .addOnSuccessListener {
-                            savePhotoName(fileName)
-                            userState.postValue(CollectContactInfo)
-                        }
-                        .addOnFailureListener {
-                            userState.postValue(DataUpdateFailed(it.message ?: ERROR_UNSPECIFIED))
-                        }
+                    if (user.uProfilePhoto != null) {
+
+                        val fileName = "${System.currentTimeMillis()}.bmp"
+                        val storageReference =
+                            firebaseStorage.reference.child("$uid/profile_photo/$fileName")
+
+                        storageReference.putBytes(preparePicture(user.uProfilePhoto!!))
+                            .addOnSuccessListener {
+                                savePhotoName(fileName)
+                                userState.postValue(CollectContactInfo)
+                            }
+                            .addOnFailureListener {
+                                userState.postValue(
+                                    DataUpdateFailed(
+                                        it.message ?: ERROR_UNSPECIFIED
+                                    )
+                                )
+                            }
+                    } else {
+                        userState.postValue(CollectContactInfo)
+                    }
+
                 }.let { disposables.add(it) }
         }
     }
@@ -204,7 +220,9 @@ class AuthViewModel @Inject constructor(
                 .firstElement()
                 .subscribe { contactData ->
                     dbReference.set(contactData)
-                        .addOnSuccessListener { userState.postValue(RegistrationFinalized) }
+                        .addOnSuccessListener {
+                            userState.postValue(RegistrationFinalized)
+                        }
                         //TODO: Create a general error message in case the exception does not provide one
                         .addOnFailureListener {
                             userState.postValue(

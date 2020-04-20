@@ -23,7 +23,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.transition.TransitionInflater
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
-import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.*
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.ProfilePictureError
+import com.briatka.pavol.littlepantry.ui.auth.viewmodel.ProfilePictureState.ProfilePictureOk
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.DISPATCH_CAMERA_INTENT
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.DISPATCH_GALLERY_INTENT
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.FILE_PROVIDER_AUTHORITY
@@ -32,6 +33,7 @@ import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.READ_EXTERNA
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_IMAGE_CAPTURE
 import com.briatka.pavol.littlepantry.utils.AuthConstants.Companion.REQUEST_PICK_IMAGE_FROM_GALLERY
 import com.briatka.pavol.littlepantry.utils.PhotoUtils
+import com.briatka.pavol.littlepantry.utils.PhotoUtils.UNSUPPORTED_FORMAT_FLAG
 import com.jakewharton.rxbinding3.view.clicks
 import dagger.android.support.DaggerFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -50,6 +52,7 @@ class UserProfilePictureFragment : DaggerFragment() {
     private val disposables = CompositeDisposable()
     private var tempFilePath: String? = null
     private var profilePicture: Bitmap? = null
+
     @Inject
     lateinit var steps: List<String>
 
@@ -158,7 +161,8 @@ class UserProfilePictureFragment : DaggerFragment() {
                 }
 
                 if (checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_PERMISSION_REQUEST)
+                    ActivityCompat.requestPermissions(requireActivity(),
+                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), READ_EXTERNAL_STORAGE_PERMISSION_REQUEST)
                 } else {
                     sharedViewModel.permissionIntentDispatcher.onNext(DISPATCH_GALLERY_INTENT)
                 }
@@ -176,7 +180,8 @@ class UserProfilePictureFragment : DaggerFragment() {
                 }
 
                 if (checkSelfPermission(requireContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
+                    ActivityCompat.requestPermissions(requireActivity(),
+                        arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
                 } else {
                     sharedViewModel.permissionIntentDispatcher.onNext(DISPATCH_CAMERA_INTENT)
                 }
@@ -184,11 +189,12 @@ class UserProfilePictureFragment : DaggerFragment() {
     }
 
     private fun subscribeToProfilePhoto() {
-        sharedViewModel.userProfilePhoto.hide()
+        sharedViewModel.displayableUser
             .observeOn(AndroidSchedulers.mainThread())
+            .filter { it.uProfilePhoto != null }
             .subscribe {
-                civ_profile_photo.setImageBitmap(it)
-                profilePicture = it
+                civ_profile_photo.setImageBitmap(it.uProfilePhoto)
+                profilePicture = it.uProfilePhoto
             }.let { disposables.add(it) }
     }
 
@@ -197,18 +203,18 @@ class UserProfilePictureFragment : DaggerFragment() {
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 profilePicture?.let {
-                    sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateRight(profilePicture!!))
+                    sharedViewModel.updateUserProfilePicture(PhotoUtils.rotateRight(profilePicture!!))
                 }
 
             }.let { disposables.add(it) }
     }
-    
+
     private fun subscribeToRotateLeftButton() {
         iv_rotate_left.clicks()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 profilePicture?.let {
-                    sharedViewModel.userProfilePhoto.onNext(PhotoUtils.rotateLeft(profilePicture!!))
+                    sharedViewModel.updateUserProfilePicture(PhotoUtils.rotateLeft(profilePicture!!))
                 }
 
             }.let { disposables.add(it) }
@@ -227,7 +233,7 @@ class UserProfilePictureFragment : DaggerFragment() {
         sharedViewModel.permissionIntentDispatcher
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                when(it) {
+                when (it) {
                     DISPATCH_CAMERA_INTENT -> dispatchTakePictureIntent()
                     DISPATCH_GALLERY_INTENT -> openGallery()
                 }
@@ -236,25 +242,42 @@ class UserProfilePictureFragment : DaggerFragment() {
     }
 
     private fun openGallery() {
-        val intent = Intent(Intent.ACTION_PICK).apply {
+        val getIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
             type = "image/*"
         }
-        startActivityForResult(intent, REQUEST_PICK_IMAGE_FROM_GALLERY)
+
+        val pickIntent = Intent(Intent.ACTION_PICK).apply {
+            type = "image/*"
+        }
+
+        val chooserIntent = Intent.createChooser(getIntent, "Select image").apply {
+            putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(pickIntent))
+        }
+        startActivityForResult(chooserIntent, REQUEST_PICK_IMAGE_FROM_GALLERY)
     }
 
     private fun processImageFromGallery(uri: Uri?) {
         if (uri != null) {
             tempFilePath = PhotoUtils.getPathFromUri(requireContext(), uri)
-            if (tempFilePath != null) {
-                sharedViewModel.userProfilePhoto.onNext(
-                    PhotoUtils.fixRotation(
-                        PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!
+            when {
+                tempFilePath == UNSUPPORTED_FORMAT_FLAG -> {
+                    sharedViewModel.userProfilePhotoState.onNext(
+                        ProfilePictureError(getString(R.string.unsupported_picture_format))
                     )
-                )
-            } else {
-                sharedViewModel.userProfilePhotoState.onNext(
-                    ProfilePictureError(getString(R.string.unsupported_picture_format))
-                )
+                }
+                tempFilePath!!.isBlank() -> {
+                    sharedViewModel.userProfilePhotoState.onNext(
+                        ProfilePictureError(getString(R.string.gallery_intent_could_not_load_image))
+                    )
+                }
+                else -> {
+                    sharedViewModel.updateUserProfilePicture(
+                        PhotoUtils.fixRotation(
+                            PhotoUtils.resampleImage(tempFilePath!!, requireContext()),
+                            tempFilePath!!
+                        )
+                    )
+                }
             }
         } else {
             sharedViewModel.userProfilePhotoState.onNext(
@@ -288,7 +311,7 @@ class UserProfilePictureFragment : DaggerFragment() {
 
     private fun processImageFromCamera() {
 
-        sharedViewModel.userProfilePhoto.onNext(
+        sharedViewModel.updateUserProfilePicture(
             PhotoUtils.fixRotation(
                 PhotoUtils.resampleImage(tempFilePath!!, requireContext()), tempFilePath!!
             )

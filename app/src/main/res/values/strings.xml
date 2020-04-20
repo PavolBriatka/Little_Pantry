@@ -52,5 +52,6 @@
     <string name="inbox_label">Inbox</string>
     <string name="profile_fragment_label">Your profile</string>
     <string name="my_posts_label">My Posts</string>
+    <string name="gallery_intent_could_not_load_image">The picture could not be loaded.</string>
 
 </resources>

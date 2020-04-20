@@ -7,7 +7,6 @@ import io.reactivex.subjects.PublishSubject
 
 interface ViewModelContract {
 
-    val userProfilePhoto: BehaviorSubject<Bitmap>
     val userPhoneNumber: BehaviorSubject<String>
     val userAddressLine: BehaviorSubject<String>
     val userCity: BehaviorSubject<String>
@@ -26,5 +25,6 @@ interface ViewModelContract {
     fun startUserLogin()
 
     fun uploadUserProfilePicture()
+    fun updateUserProfilePicture(newPicture: Bitmap)
 
 }
