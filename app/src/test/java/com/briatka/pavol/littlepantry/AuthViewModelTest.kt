@@ -1,6 +1,7 @@
 package com.briatka.pavol.littlepantry
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import com.briatka.pavol.littlepantry.models.DisplayableUser
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.AuthViewModel
 import com.briatka.pavol.littlepantry.ui.auth.viewmodel.UserState
 import com.google.android.gms.tasks.OnCompleteListener
@@ -104,8 +105,7 @@ class AuthViewModelTest {
     //region Helpers
 
     private fun prepareCredentials() {
-        viewModel.userEmail.onNext("a@b.com")
-        viewModel.userPassword.onNext("123456789")
+        viewModel.displayableUser.onNext(DisplayableUser(uEmail = "a@b.com", uPassword = "123456789"))
     }
 
     private fun userRegistrationFailureMockInteractions() {
