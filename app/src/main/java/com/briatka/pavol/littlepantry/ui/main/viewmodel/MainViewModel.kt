@@ -55,7 +55,7 @@ class MainViewModel @Inject constructor(
     private fun fetchProfileImage(uid: String, path: String) {
         val storageRef = firebaseStorage.reference.child("$uid/profile_photo/$path")
 
-        storageRef.getBytes(1024 * 1024)
+        storageRef.getBytes(1024 * 10240)
             .addOnSuccessListener {
             profilePhoto.onNext(BitmapFactory.decodeByteArray(it, 0, it.size))
             }

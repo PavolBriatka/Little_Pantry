@@ -2,6 +2,7 @@ package com.briatka.pavol.littlepantry.di
 
 import android.app.Application
 import com.briatka.pavol.littlepantry.ConnectivityLiveData
+import com.briatka.pavol.littlepantry.DisplayableUserLiveData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -34,5 +35,13 @@ class AppModule {
     @Provides
     fun provideConnectivityLiveData(application: Application): ConnectivityLiveData {
         return ConnectivityLiveData(application)
+    }
+
+    @Singleton
+    @Provides
+    fun provideDisplayableUserLiveData(firebaseAuth: FirebaseAuth,
+                                       firestore: FirebaseFirestore,
+                                       firebaseStorage: FirebaseStorage): DisplayableUserLiveData {
+        return DisplayableUserLiveData(firebaseAuth, firestore, firebaseStorage)
     }
 }

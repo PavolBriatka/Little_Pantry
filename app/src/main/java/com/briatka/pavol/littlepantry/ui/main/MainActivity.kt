@@ -1,6 +1,7 @@
 package com.briatka.pavol.littlepantry.ui.main
 
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.lifecycle.Observer
@@ -8,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import com.briatka.pavol.littlepantry.ConnectivityLiveData
+import com.briatka.pavol.littlepantry.DisplayableUserLiveData
 import com.briatka.pavol.littlepantry.R
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.FirebaseAuthLiveData
 import com.briatka.pavol.littlepantry.ui.main.viewmodel.MainViewModel
@@ -33,6 +35,8 @@ class MainActivity : DaggerAppCompatActivity() {
     lateinit var firebaseAuthStatus: FirebaseAuthLiveData
     @Inject
     lateinit var connectivityStatus: ConnectivityLiveData
+    @Inject
+    lateinit var userLiveData: DisplayableUserLiveData
     @Inject
     lateinit var drawerMenuItems: List<String>
 
@@ -61,6 +65,13 @@ class MainActivity : DaggerAppCompatActivity() {
 
         subscribeToUserState()
         subscribeToConnectivityStatus()
+        subscribeToUserData()
+    }
+
+    private fun subscribeToUserData() {
+        userLiveData.observe(this, Observer { user ->
+            Log.e("MainActivity", user.uPhoneNumber)
+        })
     }
 
     private fun createTransitionListener(): OnTransitionChangedListener {
